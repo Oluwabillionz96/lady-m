@@ -1,1 +1,27 @@
-@import "tailwindcss"
+@import "tailwindcss";
+
+@theme {
+  /* Dark Luxury Color Palette */
+  --color-luxury-dark: #0a0a0a;
+  --color-luxury-darker: #050505;
+  --color-luxury-light: #1a1a1a;
+  --color-luxury-accent: #d4af37;
+  --color-luxury-accent-light: #f0d98d;
+  --color-luxury-text: #f5f5f5;
+  --color-luxury-text-muted: #a0a0a0;
+
+  /* Custom Font Families */
+  --font-family-heading: "Playfair Display", serif;
+  --font-family-body: "Inter", sans-serif;
+
+  /* Custom Box Shadows */
+  --shadow-luxury: 0 4px 20px rgba(212, 175, 55, 0.1);
+  --shadow-luxury-lg: 0 8px 40px rgba(212, 175, 55, 0.15);
+}
+
+/* Apply base styles */
+body {
+  font-family: var(--font-family-body);
+  background-color: var(--color-luxury-dark);
+  color: var(--color-luxury-text);
+}
