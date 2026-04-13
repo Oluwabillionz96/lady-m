@@ -21,7 +21,7 @@ export default function HeroSection({
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: `url(${heroImageUrl})` }}
       >
-        <div className="absolute inset-0 bg-gradient-to-b from-luxury-darker/80 via-luxury-dark/70 to-luxury-dark" />
+        <div className="absolute inset-0 bg-linear-to-b from-luxury-darker/80 via-luxury-dark/70 to-luxury-dark" />
       </div>
 
       {/* Content */}

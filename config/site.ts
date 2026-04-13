@@ -19,10 +19,10 @@ export const siteConfig: SiteConfig = {
   tagline: "Luxury Tailoring & Fashion",
   description: "Premium tailoring services with a boss lady aesthetic",
   contact: {
-    whatsapp: "+1234567890",
+    whatsapp: "+2347080923852",
     email: "contact@ladym.example",
-    phone: "+1 (234) 567-8900",
-    location: "New York, NY",
+    phone: "+234-708-092-3852",
+    location: "Uyo, Akwa Ibom State",
   },
   social: {
     instagram: "https://instagram.com/ladym",
