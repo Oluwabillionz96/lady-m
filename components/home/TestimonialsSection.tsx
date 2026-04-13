@@ -1,4 +1,3 @@
-import React from "react";
 import Image from "next/image";
 import Card from "@/components/ui/Card";
 import { Testimonial } from "@/types";
