@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import { GalleryItem } from "@/types";
 
@@ -24,6 +25,7 @@ export default function Lightbox({
 }: LightboxProps) {
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
+  const [direction, setDirection] = useState(0);
 
   // Preload adjacent images
   useEffect(() => {
@@ -44,8 +46,14 @@ export default function Lightbox({
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
-      if (e.key === "ArrowLeft") onPrevious();
-      if (e.key === "ArrowRight") onNext();
+      if (e.key === "ArrowLeft") {
+        setDirection(-1);
+        onPrevious();
+      }
+      if (e.key === "ArrowRight") {
+        setDirection(1);
+        onNext();
+      }
     };
 
     window.addEventListener("keydown", handleKeyDown);
@@ -76,11 +84,13 @@ export default function Lightbox({
   const handleTouchEnd = () => {
     if (touchStart - touchEnd > 50) {
       // Swipe left - next image
+      setDirection(1);
       onNext();
     }
 
     if (touchStart - touchEnd < -50) {
       // Swipe right - previous image
+      setDirection(-1);
       onPrevious();
     }
   };
@@ -89,8 +99,26 @@ export default function Lightbox({
 
   const currentImage = images[currentIndex];
 
+  const slideVariants = {
+    enter: (direction: number) => ({
+      x: direction > 0 ? 1000 : -1000,
+      opacity: 0,
+    }),
+    center: {
+      x: 0,
+      opacity: 1,
+    },
+    exit: (direction: number) => ({
+      x: direction > 0 ? -1000 : 1000,
+      opacity: 0,
+    }),
+  };
+
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
       className="fixed inset-0 z-50 bg-luxury-darker/95 backdrop-blur-sm flex items-center justify-center"
       onClick={onClose}
       onTouchStart={handleTouchStart}
@@ -110,6 +138,7 @@ export default function Lightbox({
       <button
         onClick={(e) => {
           e.stopPropagation();
+          setDirection(-1);
           onPrevious();
         }}
         className="hidden md:block absolute left-4 z-50 p-3 rounded-full bg-luxury-light/80 hover:bg-luxury-light transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-luxury-accent"
@@ -122,6 +151,7 @@ export default function Lightbox({
       <button
         onClick={(e) => {
           e.stopPropagation();
+          setDirection(1);
           onNext();
         }}
         className="hidden md:block absolute right-4 z-50 p-3 rounded-full bg-luxury-light/80 hover:bg-luxury-light transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-luxury-accent"
@@ -130,46 +160,60 @@ export default function Lightbox({
         <ChevronRight className="w-8 h-8 text-luxury-text" />
       </button>
 
-      {/* Image Container */}
+      {/* Image Container with Animation */}
       <div
         className="relative w-full h-full max-w-7xl max-h-[90vh] mx-4"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="relative w-full h-full">
-          <Image
-            src={currentImage.imageUrl}
-            alt={currentImage.alt}
-            fill
-            className="object-contain"
-            sizes="100vw"
-            priority
-          />
-        </div>
+        <AnimatePresence initial={false} custom={direction} mode="wait">
+          <motion.div
+            key={currentIndex}
+            custom={direction}
+            variants={slideVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{
+              x: { type: "spring", stiffness: 300, damping: 30 },
+              opacity: { duration: 0.2 },
+            }}
+            className="relative w-full h-full"
+          >
+            <Image
+              src={currentImage.imageUrl}
+              alt={currentImage.alt}
+              fill
+              className="object-contain"
+              sizes="100vw"
+              priority
+            />
 
-        {/* Image Info */}
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-luxury-darker/90 to-transparent p-6">
-          {currentImage.title && (
-            <h3 className="text-luxury-text font-semibold text-xl md:text-2xl mb-2">
-              {currentImage.title}
-            </h3>
-          )}
-          <div className="flex items-center justify-between">
-            {currentImage.category && (
-              <p className="text-luxury-accent text-sm md:text-base">
-                {currentImage.category}
-              </p>
-            )}
-            <p className="text-luxury-text-muted text-sm">
-              {currentIndex + 1} / {images.length}
-            </p>
-          </div>
-        </div>
+            {/* Image Info */}
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-luxury-darker/90 to-transparent p-6">
+              {currentImage.title && (
+                <h3 className="text-luxury-text font-semibold text-xl md:text-2xl mb-2">
+                  {currentImage.title}
+                </h3>
+              )}
+              <div className="flex items-center justify-between">
+                {currentImage.category && (
+                  <p className="text-luxury-accent text-sm md:text-base">
+                    {currentImage.category}
+                  </p>
+                )}
+                <p className="text-luxury-text-muted text-sm">
+                  {currentIndex + 1} / {images.length}
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        </AnimatePresence>
       </div>
 
       {/* Mobile Swipe Hint */}
       <div className="md:hidden absolute bottom-4 left-1/2 transform -translate-x-1/2 text-luxury-text-muted text-sm">
         Swipe to navigate
       </div>
-    </div>
+    </motion.div>
   );
 }
