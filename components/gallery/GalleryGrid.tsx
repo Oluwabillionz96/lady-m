@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { ZoomIn } from "lucide-react";
 import { GalleryItem } from "@/types";
 
 interface GalleryGridProps {
@@ -43,20 +44,7 @@ export default function GalleryGrid({ items, onImageClick }: GalleryGridProps) {
           {/* Click Indicator */}
           <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <div className="bg-luxury-accent/90 rounded-full p-2">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={2}
-                stroke="currentColor"
-                className="w-5 h-5 text-luxury-dark"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607zM10.5 7.5v6m3-3h-6"
-                />
-              </svg>
+              <ZoomIn className="w-5 h-5 text-luxury-dark" />
             </div>
           </div>
         </button>
