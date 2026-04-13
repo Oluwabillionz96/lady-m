@@ -1,0 +1,66 @@
+"use client";
+
+import Image from "next/image";
+import { GalleryItem } from "@/types";
+
+interface GalleryGridProps {
+  items: GalleryItem[];
+  onImageClick: (index: number) => void;
+}
+
+export default function GalleryGrid({ items, onImageClick }: GalleryGridProps) {
+  return (
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8">
+      {items.map((item, index) => (
+        <button
+          key={item.id}
+          onClick={() => onImageClick(index)}
+          className="group relative aspect-4/5 overflow-hidden rounded-lg bg-luxury-light cursor-pointer focus:outline-none focus:ring-2 focus:ring-luxury-accent"
+        >
+          {/* Image */}
+          <Image
+            src={item.imageUrl}
+            alt={item.alt}
+            fill
+            className="object-cover transition-transform duration-500 group-hover:scale-110"
+            sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+          />
+
+          {/* Hover Overlay */}
+          <div className="absolute inset-0 bg-linear-to-t from-luxury-darker/90 via-luxury-darker/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <div className="absolute bottom-0 left-0 right-0 p-4">
+              {item.title && (
+                <h3 className="text-luxury-text font-semibold text-lg mb-1">
+                  {item.title}
+                </h3>
+              )}
+              {item.category && (
+                <p className="text-luxury-accent text-sm">{item.category}</p>
+              )}
+            </div>
+          </div>
+
+          {/* Click Indicator */}
+          <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <div className="bg-luxury-accent/90 rounded-full p-2">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={2}
+                stroke="currentColor"
+                className="w-5 h-5 text-luxury-dark"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607zM10.5 7.5v6m3-3h-6"
+                />
+              </svg>
+            </div>
+          </div>
+        </button>
+      ))}
+    </div>
+  );
+}
