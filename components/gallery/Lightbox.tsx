@@ -1,0 +1,175 @@
+"use client";
+
+import React, { useEffect, useState } from "react";
+import Image from "next/image";
+import { X, ChevronLeft, ChevronRight } from "lucide-react";
+import { GalleryItem } from "@/types";
+
+interface LightboxProps {
+  images: GalleryItem[];
+  currentIndex: number;
+  isOpen: boolean;
+  onClose: () => void;
+  onNext: () => void;
+  onPrevious: () => void;
+}
+
+export default function Lightbox({
+  images,
+  currentIndex,
+  isOpen,
+  onClose,
+  onNext,
+  onPrevious,
+}: LightboxProps) {
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
+
+  // Preload adjacent images
+  useEffect(() => {
+    if (isOpen && images.length > 0) {
+      const nextIndex = (currentIndex + 1) % images.length;
+      const prevIndex = (currentIndex - 1 + images.length) % images.length;
+
+      [nextIndex, prevIndex].forEach((index) => {
+        const img = new window.Image();
+        img.src = images[index].imageUrl;
+      });
+    }
+  }, [currentIndex, isOpen, images]);
+
+  // Keyboard navigation
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+      if (e.key === "ArrowLeft") onPrevious();
+      if (e.key === "ArrowRight") onNext();
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, onClose, onNext, onPrevious]);
+
+  // Prevent body scroll when lightbox is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isOpen]);
+
+  // Handle touch events for swipe
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.touches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.touches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStart - touchEnd > 50) {
+      // Swipe left - next image
+      onNext();
+    }
+
+    if (touchStart - touchEnd < -50) {
+      // Swipe right - previous image
+      onPrevious();
+    }
+  };
+
+  if (!isOpen || images.length === 0) return null;
+
+  const currentImage = images[currentIndex];
+
+  return (
+    <div
+      className="fixed inset-0 z-50 bg-luxury-darker/95 backdrop-blur-sm flex items-center justify-center"
+      onClick={onClose}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
+      {/* Close Button */}
+      <button
+        onClick={onClose}
+        className="absolute top-4 right-4 z-50 p-2 rounded-full bg-luxury-light/80 hover:bg-luxury-light transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-luxury-accent"
+        aria-label="Close lightbox"
+      >
+        <X className="w-6 h-6 text-luxury-text" />
+      </button>
+
+      {/* Desktop Navigation - Previous */}
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onPrevious();
+        }}
+        className="hidden md:block absolute left-4 z-50 p-3 rounded-full bg-luxury-light/80 hover:bg-luxury-light transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-luxury-accent"
+        aria-label="Previous image"
+      >
+        <ChevronLeft className="w-8 h-8 text-luxury-text" />
+      </button>
+
+      {/* Desktop Navigation - Next */}
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onNext();
+        }}
+        className="hidden md:block absolute right-4 z-50 p-3 rounded-full bg-luxury-light/80 hover:bg-luxury-light transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-luxury-accent"
+        aria-label="Next image"
+      >
+        <ChevronRight className="w-8 h-8 text-luxury-text" />
+      </button>
+
+      {/* Image Container */}
+      <div
+        className="relative w-full h-full max-w-7xl max-h-[90vh] mx-4"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="relative w-full h-full">
+          <Image
+            src={currentImage.imageUrl}
+            alt={currentImage.alt}
+            fill
+            className="object-contain"
+            sizes="100vw"
+            priority
+          />
+        </div>
+
+        {/* Image Info */}
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-luxury-darker/90 to-transparent p-6">
+          {currentImage.title && (
+            <h3 className="text-luxury-text font-semibold text-xl md:text-2xl mb-2">
+              {currentImage.title}
+            </h3>
+          )}
+          <div className="flex items-center justify-between">
+            {currentImage.category && (
+              <p className="text-luxury-accent text-sm md:text-base">
+                {currentImage.category}
+              </p>
+            )}
+            <p className="text-luxury-text-muted text-sm">
+              {currentIndex + 1} / {images.length}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Swipe Hint */}
+      <div className="md:hidden absolute bottom-4 left-1/2 transform -translate-x-1/2 text-luxury-text-muted text-sm">
+        Swipe to navigate
+      </div>
+    </div>
+  );
+}
