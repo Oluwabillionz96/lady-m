@@ -34,7 +34,7 @@ export default function RootLayout({
         {children}
         <Footer />
         <Toaster 
-          position="bottom-right"
+          position="top-center"
           theme="dark"
           toastOptions={{
             style: {
