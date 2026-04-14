@@ -11,6 +11,7 @@ interface WhatsAppButtonProps {
   message?: string;
   variant?: "primary" | "secondary";
   size?: "sm" | "md" | "lg";
+  className?: string;
 }
 
 export default function WhatsAppButton({
@@ -19,6 +20,7 @@ export default function WhatsAppButton({
   message = "Hi Lady M, I'm interested in your tailoring services!",
   variant = "primary",
   size = "md",
+  className
 }: WhatsAppButtonProps) {
   const handleClick = () => {
     const phone = phoneNumber || siteConfig.contact.whatsapp;
@@ -56,7 +58,7 @@ export default function WhatsAppButton({
   return (
     <button
       onClick={handleClick}
-      className={`${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]}`}
+      className={`${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
       aria-label={text}
     >
       <FaWhatsapp className={size === "sm" ? "w-4 h-4" : size === "md" ? "w-5 h-5" : "w-6 h-6"} />
