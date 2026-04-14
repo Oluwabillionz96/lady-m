@@ -183,13 +183,14 @@ export default function Lightbox({
               src={currentImage.imageUrl}
               alt={currentImage.alt}
               fill
+              loading="eager"
               className="object-contain"
               sizes="100vw"
               priority
             />
 
             {/* Image Info */}
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-luxury-darker/90 to-transparent p-6">
+            <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-luxury-darker/90 to-transparent p-6">
               {currentImage.title && (
                 <h3 className="text-luxury-text font-semibold text-xl md:text-2xl mb-2">
                   {currentImage.title}

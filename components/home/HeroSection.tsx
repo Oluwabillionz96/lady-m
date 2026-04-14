@@ -11,7 +11,7 @@ export default function HeroSection({
   title,
   subtitle,
   ctaText = "Book Your Consultation",
-  heroImageUrl = "/images/hero/hero-bg.jpg",
+  heroImageUrl,
 }: HeroSectionProps) {
   return (
     <section className="relative min-h-[80vh] md:min-h-screen flex items-center justify-center overflow-hidden">

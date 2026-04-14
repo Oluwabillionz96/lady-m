@@ -23,6 +23,7 @@ export default function GalleryGrid({ items, onImageClick }: GalleryGridProps) {
             src={item.imageUrl}
             alt={item.alt}
             fill
+            loading="lazy"
             className="object-cover transition-transform duration-500 group-hover:scale-110"
             sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
           />

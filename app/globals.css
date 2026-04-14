@@ -40,6 +40,12 @@ body {
   color: var(--color-luxury-text);
 }
 
+@layer utilities{
+  button{
+    @apply cursor-pointer;
+  }
+}
+
 /* Fade-in animation */
 @keyframes fade-in {
   from {
