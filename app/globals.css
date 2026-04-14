@@ -17,11 +17,46 @@
   /* Custom Box Shadows */
   --shadow-luxury: 0 4px 20px rgba(212, 175, 55, 0.1);
   --shadow-luxury-lg: 0 8px 40px rgba(212, 175, 55, 0.15);
+
+  /* Animation Durations */
+  --animate-duration-fast: 0.2s;
+  --animate-duration-normal: 0.3s;
+  --animate-duration-slow: 0.5s;
+
+  /* Animation Timing Functions */
+  --animate-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --animate-ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --animate-ease-out: cubic-bezier(0, 0, 0.2, 1);
 }
 
 /* Apply base styles */
+* {
+  scroll-behavior: smooth;
+}
+
 body {
   font-family: var(--font-family-body);
   background-color: var(--color-luxury-dark);
   color: var(--color-luxury-text);
+}
+
+/* Fade-in animation */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.8s var(--animate-ease) forwards;
+}
+
+/* Smooth transitions for all interactive elements */
+a, button {
+  transition: all var(--animate-duration-normal) var(--animate-ease);
 }

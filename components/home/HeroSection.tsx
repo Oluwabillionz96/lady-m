@@ -1,4 +1,3 @@
-import React from "react";
 import WhatsAppButton from "@/components/ui/WhatsAppButton";
 
 interface HeroSectionProps {
@@ -15,7 +14,7 @@ export default function HeroSection({
   heroImageUrl = "/images/hero/hero-bg.jpg",
 }: HeroSectionProps) {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-[80vh] md:min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background Image with Overlay */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -25,11 +24,11 @@ export default function HeroSection({
       </div>
 
       {/* Content */}
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 text-center">
-        <h1 className="font-family-heading text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-luxury-accent mb-6 leading-tight animate-fade-in">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32 text-center">
+        <h1 className="font-family-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-luxury-accent mb-4 md:mb-6 leading-tight animate-fade-in">
           {title}
         </h1>
-        <p className="text-luxury-text text-lg sm:text-xl md:text-2xl max-w-3xl mx-auto mb-12 leading-relaxed">
+        <p className="text-luxury-text text-base sm:text-lg md:text-xl lg:text-2xl max-w-3xl mx-auto mb-8 md:mb-12 leading-relaxed">
           {subtitle}
         </p>
         <div className="flex justify-center">
@@ -38,7 +37,7 @@ export default function HeroSection({
       </div>
 
       {/* Scroll Indicator */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce hidden md:block">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
