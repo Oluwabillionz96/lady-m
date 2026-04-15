@@ -1,6 +1,6 @@
 /**
  * Type definitions for Lady M Portfolio Website
- * 
+ *
  * This file contains all TypeScript interfaces and types used across the application.
  * These types ensure type safety and provide clear contracts for data structures.
  */
@@ -35,7 +35,7 @@ export interface Testimonial {
  */
 export interface Metric {
   id: string;
-  value: string | number;
+  value: string;
   label: string;
   icon?: string;
 }

@@ -6,9 +6,19 @@ import TestimonialsSection from "@/components/home/TestimonialsSection";
 import FinalCTA from "@/components/home/FinalCTA";
 import { galleryItems } from "@/config/gallery";
 import { testimonials } from "@/config/testimonials";
-import { metrics } from "@/config/metrics";
+import { getMetrics } from "@/lib/supabase/server";
 
-export default function Home() {
+export default async function Home() {
+  // Fetch metrics from Supabase
+  const supabaseMetrics = await getMetrics();
+  
+  // Transform Supabase data to match component interface
+  const transformedMetrics = supabaseMetrics.map(metric => ({
+    id: metric.id,
+    value: metric.value,
+    label: metric.label
+  }));
+
   return (
     <main>
       <HeroSection
@@ -18,7 +28,7 @@ export default function Home() {
         heroImageUrl="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=2070&auto=format&fit=crop"
       />
 
-      <MetricsSection metrics={metrics} />
+      <MetricsSection metrics={transformedMetrics} />
 
       <FeaturedWorks items={galleryItems} maxItems={6} />
 

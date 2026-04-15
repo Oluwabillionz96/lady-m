@@ -4,6 +4,8 @@ import "./globals.css";
 import Navigation from "@/components/layout/Navigation";
 import Footer from "@/components/layout/Footer";
 import { Toaster } from "sonner";
+import { SiteSettingsProvider } from "@/context/site-settings-provider";
+import { getSiteSettings } from "@/lib/supabase/server";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -22,28 +24,33 @@ export const metadata: Metadata = {
   description: "Premium tailoring services with a boss lady aesthetic",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Fetch site settings from Supabase
+  const siteSettings = await getSiteSettings();
+
   return (
     <html lang="en" className={`${playfair.variable} ${inter.variable}`}>
       <body className={inter.className}>
-        <Navigation />
-        {children}
-        <Footer />
-        <Toaster 
-          position="top-center"
-          theme="dark"
-          toastOptions={{
-            style: {
-              background: '#1a1a1a',
-              border: '1px solid #d4af37',
-              color: '#f5f5f5',
-            },
-          }}
-        />
+        <SiteSettingsProvider settings={siteSettings}>
+          <Navigation />
+          {children}
+          <Footer />
+          <Toaster
+            position="top-center"
+            theme="dark"
+            toastOptions={{
+              style: {
+                background: "#1a1a1a",
+                border: "1px solid #d4af37",
+                color: "#f5f5f5",
+              },
+            }}
+          />
+        </SiteSettingsProvider>
       </body>
     </html>
   );

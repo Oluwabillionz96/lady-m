@@ -1,13 +1,13 @@
 "use client";
 
-import { siteConfig } from "@/config/site";
+// import { siteConfig } from "@/config/site";
 import { getWhatsAppUrl } from "@/lib/utils";
 import { toast } from "sonner";
 import { FaWhatsapp } from "react-icons/fa6";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 interface WhatsAppButtonProps {
   text?: string;
-  phoneNumber?: string;
   message?: string;
   variant?: "primary" | "secondary";
   size?: "sm" | "md" | "lg";
@@ -16,18 +16,20 @@ interface WhatsAppButtonProps {
 
 export default function WhatsAppButton({
   text = "Contact on WhatsApp",
-  phoneNumber,
+
   message = "Hi Lady M, I'm interested in your tailoring services!",
   variant = "primary",
   size = "md",
-  className
+  className,
 }: WhatsAppButtonProps) {
+  const { phone } = useSiteSettings();
   const handleClick = () => {
-    const phone = phoneNumber || siteConfig.contact.whatsapp;
-    const url = getWhatsAppUrl(phone, message);
-    
+    const url = getWhatsAppUrl(phone ?? "", message);
+
     if (!url) {
-      toast.error("Unable to connect. Please try again or contact us directly.");
+      toast.error(
+        "Unable to connect. Please try again or contact us directly.",
+      );
       return;
     }
 
@@ -61,7 +63,11 @@ export default function WhatsAppButton({
       className={`${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
       aria-label={text}
     >
-      <FaWhatsapp className={size === "sm" ? "w-4 h-4" : size === "md" ? "w-5 h-5" : "w-6 h-6"} />
+      <FaWhatsapp
+        className={
+          size === "sm" ? "w-4 h-4" : size === "md" ? "w-5 h-5" : "w-6 h-6"
+        }
+      />
       <span>{text}</span>
     </button>
   );
