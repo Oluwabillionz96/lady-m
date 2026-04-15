@@ -1,12 +1,6 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient } from '@/lib/supabase/client'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+// Create and export the client instance
+const client = createClient()
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error("Missing Supabase environment variables");
-}
-
-const client = createClient(supabaseUrl, supabaseAnonKey);
-
-export default client;
+export default client

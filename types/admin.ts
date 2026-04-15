@@ -7,7 +7,6 @@ export type Result<T> =
 export interface DatabaseGalleryPhoto {
   id: string;
   image_url: string;
-  alt: string;
   title: string;
   category: string;
   created_at: string;
@@ -17,9 +16,9 @@ export interface DatabaseGalleryPhoto {
 export interface DatabaseTestimonial {
   id: string;
   name: string;
-  role: string;
+  role?: string;
   text: string;
-  photo_url: string;
+  photo_url?: string;
   created_at: string;
   updated_at: string;
 }
@@ -28,8 +27,6 @@ export interface DatabaseMetric {
   id: string;
   value: string;
   label: string;
-  icon: string | null;
-  display_order: number;
   updated_at: string;
 }
 

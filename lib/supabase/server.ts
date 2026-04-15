@@ -1,93 +1,114 @@
-import { createClient } from "@supabase/supabase-js";
+import { createServerClient } from "@supabase/ssr";
+import { cookies } from "next/headers";
+import type { Database } from "@/types/database";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+export async function createClient() {
+  const cookieStore = await cookies();
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error("Missing Supabase environment variables");
+  return createServerClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return cookieStore.getAll();
+        },
+        setAll(cookiesToSet) {
+          try {
+            cookiesToSet.forEach(({ name, value, options }) =>
+              cookieStore.set(name, value, options),
+            );
+          } catch {
+            // The `setAll` method was called from a Server Component.
+            // This can be ignored if you have middleware refreshing
+            // user sessions.
+          }
+        },
+      },
+    },
+  );
 }
-
-// Server-side Supabase client for data fetching
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Data fetching functions
 export async function getMetrics() {
   try {
+    const supabase = await createClient();
     const { data, error } = await supabase
-      .from('metrics')
-      .select('*')
-      .order('created_at', { ascending: true });
+      .from("metrics")
+      .select("*")
+      .order("created_at", { ascending: true });
 
     if (error) {
-      console.error('Error fetching metrics:', error);
+      console.error("Error fetching metrics:", error);
       return [];
     }
 
     return data || [];
   } catch (error) {
-    console.error('Error fetching metrics:', error);
+    console.error("Error fetching metrics:", error);
     return [];
   }
 }
 
 export async function getTestimonials() {
   try {
+    const supabase = await createClient();
     const { data, error } = await supabase
-      .from('testimonials')
-      .select('*')
-      .order('created_at', { ascending: false });
+      .from("testimonials")
+      .select("*")
+      .order("created_at", { ascending: false });
 
     if (error) {
-      console.error('Error fetching testimonials:', error);
+      console.error("Error fetching testimonials:", error);
       return [];
     }
 
     return data || [];
   } catch (error) {
-    console.error('Error fetching testimonials:', error);
+    console.error("Error fetching testimonials:", error);
     return [];
   }
 }
 
 export async function getGalleryPhotos() {
   try {
+    const supabase = await createClient();
     const { data, error } = await supabase
-      .from('gallery_photos')
-      .select('*')
-      .order('created_at', { ascending: false });
+      .from("gallery_photos")
+      .select("*")
+      .order("created_at", { ascending: false });
 
     if (error) {
-      console.error('Error fetching gallery photos:', error);
+      console.error("Error fetching gallery photos:", error);
       return [];
     }
 
     return data || [];
   } catch (error) {
-    console.error('Error fetching gallery photos:', error);
+    console.error("Error fetching gallery photos:", error);
     return [];
   }
 }
 
 export async function getSiteSettings() {
   try {
-    const { data, error } = await supabase
-      .from('site_settings')
-      .select('*');
+    const supabase = await createClient();
+    const { data, error } = await supabase.from("site_settings").select("*");
 
     if (error) {
-      console.error('Error fetching site settings:', error);
+      console.error("Error fetching site settings:", error);
       return {};
     }
 
     // Convert array of key-value pairs to object
     const settings: Record<string, string> = {};
-    data?.forEach(setting => {
+    data?.forEach((setting) => {
       settings[setting.key] = setting.value;
     });
 
     return settings;
   } catch (error) {
-    console.error('Error fetching site settings:', error);
+    console.error("Error fetching site settings:", error);
     return {};
   }
 }
