@@ -21,7 +21,7 @@ function AdminLayoutContent({ children }: { children: ReactNode }) {
   }
 
   // If on login page, render without admin layout
-  if (pathname === '/admin/login') {
+  if (pathname === "/admin/login") {
     return <div className="min-h-screen bg-luxury-dark">{children}</div>;
   }
 
@@ -31,21 +31,23 @@ function AdminLayoutContent({ children }: { children: ReactNode }) {
   }
 
   return (
-    <div className="flex h-screen bg-luxury-dark overflow-hidden">
+    <div className="flex h-fit bg-luxury-dark overflow-hidden">
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
       {/* Sidebar */}
-      <div className={`
+      <div
+        className={`
         fixed lg:static inset-y-0 left-0 z-50 w-64 bg-luxury-light border-r border-[#333333] 
         flex flex-col transform transition-transform duration-300 ease-in-out
-        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-      `}>
+        ${sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
+      `}
+      >
         <AdminNavigation />
       </div>
 
@@ -68,7 +70,7 @@ function AdminLayoutContent({ children }: { children: ReactNode }) {
         </header>
 
         {/* Content Area */}
-        <main className="flex-1 bg-luxury-dark p-4 lg:p-6">
+        <main className="flex-1 h- bg-luxury-dark p-4 lg:p-6">
           <div className="max-w-7xl mx-auto">{children}</div>
         </main>
       </div>

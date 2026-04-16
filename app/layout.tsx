@@ -34,7 +34,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en" className={`${playfair.variable} ${inter.variable}`}>
-      <body className={inter.className}>
+      <body className={`${inter.className} `}>
         <SiteSettingsProvider settings={siteSettings}>
           <Navigation />
           {children}
