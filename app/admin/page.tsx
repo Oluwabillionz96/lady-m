@@ -1,18 +1,40 @@
 "use client";
 
 import useAuth from "@/hooks/useAuth";
-import { 
+import {
   // LayoutDashboard,
-  Images, 
-  MessageSquare, 
+  Images,
+  MessageSquare,
   Settings,
   Users,
-  TrendingUp
+  TrendingUp,
 } from "lucide-react";
 import Link from "next/link";
+import { useState, useEffect } from "react";
+import { getGalleryPhotoCount } from "@/lib/actions/gallery";
 
 const AdminPage = () => {
   const auth = useAuth();
+  const [photoCount, setPhotoCount] = useState<number | null>(null);
+  const [loadingCount, setLoadingCount] = useState(true);
+
+  // Fetch photo count on component mount
+  useEffect(() => {
+    async function fetchPhotoCount() {
+      try {
+        const result = await getGalleryPhotoCount();
+        if (result.success) {
+          setPhotoCount(result.data);
+        }
+      } catch (error) {
+        console.error("Error fetching photo count:", error);
+      } finally {
+        setLoadingCount(false);
+      }
+    }
+
+    fetchPhotoCount();
+  }, []);
 
   // Show loading state while auth is loading
   if (auth?.loading) {
@@ -44,7 +66,8 @@ const AdminPage = () => {
           Welcome to Admin Dashboard
         </h1>
         <p className="text-luxury-text-muted">
-          Manage your portfolio content, gallery, testimonials, and site settings.
+          Manage your portfolio content, gallery, testimonials, and site
+          settings.
         </p>
       </div>
 
@@ -54,7 +77,9 @@ const AdminPage = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-luxury-text-muted text-sm">Total Photos</p>
-              <p className="text-2xl font-bold text-luxury-text">--</p>
+              <p className="text-2xl font-bold text-luxury-text">
+                {loadingCount ? "--" : photoCount}
+              </p>
             </div>
             <Images className="w-8 h-8 text-luxury-accent" />
           </div>
@@ -93,7 +118,9 @@ const AdminPage = () => {
 
       {/* Quick Actions */}
       <div className="bg-luxury-light rounded-lg p-6 border border-luxury-accent/20">
-        <h2 className="text-xl font-semibold text-luxury-text mb-4">Quick Actions</h2>
+        <h2 className="text-xl font-semibold text-luxury-text mb-4">
+          Quick Actions
+        </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <Link
             href="/admin/gallery"
@@ -101,8 +128,12 @@ const AdminPage = () => {
           >
             <Images className="w-6 h-6 text-luxury-accent group-hover:text-black" />
             <div>
-              <h3 className="font-medium text-luxury-text group-hover:text-black">Manage Gallery</h3>
-              <p className="text-sm text-luxury-text-muted group-hover:text-black/70">Upload and organize photos</p>
+              <h3 className="font-medium text-luxury-text group-hover:text-black">
+                Manage Gallery
+              </h3>
+              <p className="text-sm text-luxury-text-muted group-hover:text-black/70">
+                Upload and organize photos
+              </p>
             </div>
           </Link>
 
@@ -112,8 +143,12 @@ const AdminPage = () => {
           >
             <MessageSquare className="w-6 h-6 text-luxury-accent group-hover:text-black" />
             <div>
-              <h3 className="font-medium text-luxury-text group-hover:text-black">Manage Testimonials</h3>
-              <p className="text-sm text-luxury-text-muted group-hover:text-black/70">Add client reviews</p>
+              <h3 className="font-medium text-luxury-text group-hover:text-black">
+                Manage Testimonials
+              </h3>
+              <p className="text-sm text-luxury-text-muted group-hover:text-black/70">
+                Add client reviews
+              </p>
             </div>
           </Link>
 
@@ -123,8 +158,12 @@ const AdminPage = () => {
           >
             <Settings className="w-6 h-6 text-luxury-accent group-hover:text-black" />
             <div>
-              <h3 className="font-medium text-luxury-text group-hover:text-black">Site Settings</h3>
-              <p className="text-sm text-luxury-text-muted group-hover:text-black/70">Update contact info</p>
+              <h3 className="font-medium text-luxury-text group-hover:text-black">
+                Site Settings
+              </h3>
+              <p className="text-sm text-luxury-text-muted group-hover:text-black/70">
+                Update contact info
+              </p>
             </div>
           </Link>
         </div>
@@ -132,11 +171,15 @@ const AdminPage = () => {
 
       {/* Recent Activity */}
       <div className="bg-luxury-light rounded-lg p-6 border border-luxury-accent/20">
-        <h2 className="text-xl font-semibold text-luxury-text mb-4">Recent Activity</h2>
+        <h2 className="text-xl font-semibold text-luxury-text mb-4">
+          Recent Activity
+        </h2>
         <div className="space-y-3">
           <div className="flex items-center gap-3 p-3 bg-luxury-dark rounded-lg">
             <div className="w-2 h-2 bg-luxury-accent rounded-full"></div>
-            <p className="text-luxury-text-muted">Welcome to your admin dashboard!</p>
+            <p className="text-luxury-text-muted">
+              Welcome to your admin dashboard!
+            </p>
           </div>
         </div>
       </div>

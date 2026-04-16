@@ -21,7 +21,7 @@ export default function GalleryGrid({ items, onImageClick }: GalleryGridProps) {
           {/* Image */}
           <Image
             src={item.imageUrl}
-            alt={item.alt}
+            alt={item.title}
             fill
             loading="lazy"
             className="object-cover transition-transform duration-500 group-hover:scale-110"

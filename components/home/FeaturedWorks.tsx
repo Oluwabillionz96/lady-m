@@ -38,7 +38,7 @@ export default function FeaturedWorks({
               {/* Image */}
               <Image
                 src={item.imageUrl}
-                alt={item.alt}
+                alt={item.title}
                 fill
                 className="object-cover transition-transform duration-500 group-hover:scale-110"
                 sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"

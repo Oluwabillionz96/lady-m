@@ -202,3 +202,24 @@ export async function getPublicGalleryPhotos(): Promise<
     return { success: false, error: "An unexpected error occurred" };
   }
 }
+
+// Get total gallery photo count
+export async function getGalleryPhotoCount(): Promise<Result<number>> {
+  try {
+    const supabase = await createServerClient();
+
+    const { count, error } = await supabase
+      .from("gallery_photos")
+      .select("*", { count: "exact", head: true });
+
+    if (error) {
+      console.error("Error fetching gallery photo count:", error);
+      return { success: false, error: "Failed to fetch photo count" };
+    }
+
+    return { success: true, data: count || 0 };
+  } catch (error) {
+    console.error("Unexpected error fetching gallery photo count:", error);
+    return { success: false, error: "An unexpected error occurred" };
+  }
+}
