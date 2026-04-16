@@ -1,13 +1,42 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import GalleryGrid from "@/components/gallery/GalleryGrid";
 import Lightbox from "@/components/gallery/Lightbox";
-import { galleryItems } from "@/config/gallery";
+import { getPublicGalleryPhotos } from "@/lib/actions/gallery";
+import { GalleryItem } from "@/types";
 
 export default function GalleryPage() {
+  const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([]);
+  const [loading, setLoading] = useState(true);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  // Fetch gallery photos on component mount
+  useEffect(() => {
+    async function fetchGalleryPhotos() {
+      try {
+        const result = await getPublicGalleryPhotos();
+        if (result.success) {
+          // Convert database photos to GalleryItem format
+          const items: GalleryItem[] = result.data.map((photo) => ({
+            id: photo.id,
+            imageUrl: photo.image_url,
+            alt: photo.title,
+            title: photo.title,
+            category: photo.category,
+          }));
+          setGalleryItems(items);
+        }
+      } catch (error) {
+        console.error("Error fetching gallery photos:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchGalleryPhotos();
+  }, []);
 
   const handleImageClick = (index: number) => {
     setCurrentImageIndex(index);
@@ -41,19 +70,43 @@ export default function GalleryPage() {
           </p>
         </div>
 
+        {/* Loading State */}
+        {loading && (
+          <div className="text-center py-16">
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-luxury-accent"></div>
+            <p className="text-luxury-text-muted mt-4">Loading gallery...</p>
+          </div>
+        )}
+
         {/* Gallery Grid */}
-        <GalleryGrid items={galleryItems} onImageClick={handleImageClick} />
+        {!loading && galleryItems.length > 0 && (
+          <GalleryGrid items={galleryItems} onImageClick={handleImageClick} />
+        )}
+
+        {/* Empty State */}
+        {!loading && galleryItems.length === 0 && (
+          <div className="text-center py-16">
+            <p className="text-luxury-text-muted text-lg">
+              No gallery photos available at the moment.
+            </p>
+            <p className="text-luxury-text-muted text-sm mt-2">
+              Check back soon for our latest work!
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Lightbox */}
-      <Lightbox
-        images={galleryItems}
-        currentIndex={currentImageIndex}
-        isOpen={isLightboxOpen}
-        onClose={handleClose}
-        onNext={handleNext}
-        onPrevious={handlePrevious}
-      />
+      {galleryItems.length > 0 && (
+        <Lightbox
+          images={galleryItems}
+          currentIndex={currentImageIndex}
+          isOpen={isLightboxOpen}
+          onClose={handleClose}
+          onNext={handleNext}
+          onPrevious={handlePrevious}
+        />
+      )}
     </main>
   );
 }

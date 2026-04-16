@@ -58,8 +58,9 @@ export async function createGalleryPhoto(
       return { success: false, error: "Failed to create gallery photo" };
     }
 
-    // Refresh the gallery page cache
+    // Refresh both admin and public gallery caches
     revalidatePath("/admin/gallery");
+    revalidatePath("/gallery");
 
     return { success: true, data: photo };
   } catch (error) {
@@ -97,8 +98,9 @@ export async function updateGalleryPhoto(
       return { success: false, error: "Failed to update gallery photo" };
     }
 
-    // Refresh the gallery page cache
+    // Refresh both admin and public gallery caches
     revalidatePath("/admin/gallery");
+    revalidatePath("/gallery");
 
     return { success: true, data: photo };
   } catch (error) {
@@ -151,8 +153,9 @@ export async function deleteGalleryPhoto(id: string): Promise<Result<boolean>> {
       }
     }
 
-    // Refresh the gallery page cache
+    // Refresh both admin and public gallery caches
     revalidatePath("/admin/gallery");
+    revalidatePath("/gallery");
 
     return { success: true, data: true };
   } catch (error) {
@@ -176,4 +179,26 @@ function extractPublicIdFromUrl(url: string): string | null {
   }
 }
 
+// Public gallery photos (no authentication required)
+export async function getPublicGalleryPhotos(): Promise<
+  Result<GalleryPhoto[]>
+> {
+  try {
+    const supabase = await createServerClient();
 
+    const { data, error } = await supabase
+      .from("gallery_photos")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("Error fetching public gallery photos:", error);
+      return { success: false, error: "Failed to fetch gallery photos" };
+    }
+
+    return { success: true, data: data || [] };
+  } catch (error) {
+    console.error("Unexpected error fetching public gallery photos:", error);
+    return { success: false, error: "An unexpected error occurred" };
+  }
+}

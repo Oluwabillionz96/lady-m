@@ -4,9 +4,10 @@ import MetricsSection from "@/components/home/MetricsSection";
 import BrandContentSection from "@/components/home/BrandContentSection";
 import TestimonialsSection from "@/components/home/TestimonialsSection";
 import FinalCTA from "@/components/home/FinalCTA";
-import { galleryItems } from "@/config/gallery";
+import { getPublicGalleryPhotos } from "@/lib/actions/gallery";
 import { testimonials } from "@/config/testimonials";
 import { getMetrics } from "@/lib/supabase/server";
+import { GalleryItem } from "@/types";
 
 export default async function Home() {
   // Fetch metrics from Supabase
@@ -17,6 +18,19 @@ export default async function Home() {
     id: metric.id,
     value: metric.value,
     label: metric.label
+  }));
+
+  // Fetch gallery photos from database
+  const galleryResult = await getPublicGalleryPhotos();
+  const galleryPhotos = galleryResult.success ? galleryResult.data : [];
+  
+  // Convert database photos to GalleryItem format
+  const galleryItems: GalleryItem[] = galleryPhotos.map((photo) => ({
+    id: photo.id,
+    imageUrl: photo.image_url,
+    alt: photo.title,
+    title: photo.title,
+    category: photo.category,
   }));
 
   return (
