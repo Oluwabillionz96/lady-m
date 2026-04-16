@@ -36,7 +36,11 @@ const navigationItems = [
   },
 ];
 
-export function AdminNavigation() {
+interface AdminNavigationProps {
+  onNavigate?: () => void;
+}
+
+export function AdminNavigation({ onNavigate }: AdminNavigationProps) {
   const pathname = usePathname();
   const authData = useAuth();
 
@@ -61,6 +65,7 @@ export function AdminNavigation() {
             <Link
               key={item.href}
               href={item.href}
+              onClick={onNavigate}
               className={`
                 flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200
                 ${

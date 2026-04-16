@@ -11,6 +11,8 @@ function AdminLayoutContent({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  const closeSidebar = () => setSidebarOpen(false);
+
   // Show loading state
   if (authData?.loading) {
     return (
@@ -48,7 +50,7 @@ function AdminLayoutContent({ children }: { children: ReactNode }) {
         ${sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
       `}
       >
-        <AdminNavigation />
+        <AdminNavigation onNavigate={closeSidebar} />
       </div>
 
       {/* Main Content */}

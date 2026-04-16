@@ -9,6 +9,9 @@ export async function getGalleryPhotos(): Promise<Result<GalleryPhoto[]>> {
   try {
     const supabase = await createServerClient();
 
+    // TODO: Implement pagination with page/pageSize parameters
+    // Use .range(from, to) for offset-based pagination
+    // Add count: 'exact' to get total count for pagination UI
     const { data, error } = await supabase
       .from("gallery_photos")
       .select("*")

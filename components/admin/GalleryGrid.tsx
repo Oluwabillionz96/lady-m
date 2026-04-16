@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { Edit, Trash2, Eye } from "lucide-react";
 import { toast } from "sonner";
 import { deleteGalleryPhoto, updateGalleryPhoto } from "@/lib/actions/gallery";
 import { GalleryPhoto } from "@/types";
 import { GalleryPhotoForm } from "./GalleryPhotoForm";
+import { ConfirmDialog } from "./ConfirmDialog";
+import Lightbox from "@/components/gallery/Lightbox";
 import Image from "next/image";
 
 interface GalleryGridProps {
@@ -14,31 +15,33 @@ interface GalleryGridProps {
 
 export function GalleryGrid({ photos }: GalleryGridProps) {
   const [editingPhoto, setEditingPhoto] = useState<GalleryPhoto | null>(null);
-  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deletingPhoto, setDeletingPhoto] = useState<GalleryPhoto | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
-  const handleDelete = async (photo: GalleryPhoto) => {
-    if (
-      !confirm(
-        `Are you sure you want to delete "${photo.title}"? This action cannot be undone.`,
-      )
-    ) {
-      return;
-    }
+  const handleDeleteClick = (photo: GalleryPhoto) => {
+    setDeletingPhoto(photo);
+  };
 
-    setDeletingId(photo.id);
+  const handleDeleteConfirm = async () => {
+    if (!deletingPhoto) return;
+
+    setIsDeleting(true);
 
     try {
-      const result = await deleteGalleryPhoto(photo.id);
+      const result = await deleteGalleryPhoto(deletingPhoto.id);
 
       if (result.success) {
         toast.success("Photo deleted successfully");
+        setLightboxIndex(null);
+        setDeletingPhoto(null);
       } else {
         toast.error(result.error);
       }
-    } catch (error) {
+    } catch {
       toast.error("Failed to delete photo");
     } finally {
-      setDeletingId(null);
+      setIsDeleting(false);
     }
   };
 
@@ -48,7 +51,7 @@ export function GalleryGrid({ photos }: GalleryGridProps) {
 
   const handleUpdate = async (
     id: string,
-    data: { title: string; category: string },
+    data: { title: string; category: string }
   ) => {
     try {
       const result = await updateGalleryPhoto(id, data);
@@ -59,8 +62,29 @@ export function GalleryGrid({ photos }: GalleryGridProps) {
       } else {
         toast.error(result.error);
       }
-    } catch (error) {
+    } catch {
       toast.error("Failed to update photo");
+    }
+  };
+
+  // Convert GalleryPhoto to GalleryItem format for lightbox
+  const lightboxImages = photos.map((photo) => ({
+    id: photo.id,
+    imageUrl: photo.image_url,
+    alt: photo.title,
+    title: photo.title,
+    category: photo.category,
+  }));
+
+  const handleNext = () => {
+    if (lightboxIndex !== null && lightboxIndex < photos.length - 1) {
+      setLightboxIndex(lightboxIndex + 1);
+    }
+  };
+
+  const handlePrevious = () => {
+    if (lightboxIndex !== null && lightboxIndex > 0) {
+      setLightboxIndex(lightboxIndex - 1);
     }
   };
 
@@ -71,10 +95,11 @@ export function GalleryGrid({ photos }: GalleryGridProps) {
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {photos.map((photo) => (
+        {photos.map((photo, index) => (
           <div
             key={photo.id}
-            className="bg-luxury-light rounded-lg overflow-hidden border border-luxury-accent/20 hover:border-luxury-accent/40 transition-colors group"
+            onClick={() => setLightboxIndex(index)}
+            className="bg-luxury-light rounded-lg overflow-hidden border border-luxury-accent/20 hover:border-luxury-accent/40 transition-all cursor-pointer group"
           >
             {/* Image */}
             <div className="aspect-square relative overflow-hidden">
@@ -84,32 +109,6 @@ export function GalleryGrid({ photos }: GalleryGridProps) {
                 fill
                 className="object-cover group-hover:scale-105 transition-transform duration-300"
               />
-
-              {/* Overlay Actions */}
-              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                <button
-                  onClick={() => window.open(photo.image_url, "_blank")}
-                  className="p-2 bg-luxury-accent text-luxury-dark rounded-lg hover:bg-luxury-accent-light transition-colors"
-                  title="View full size"
-                >
-                  <Eye className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => handleEdit(photo)}
-                  className="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-                  title="Edit photo"
-                >
-                  <Edit className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => handleDelete(photo)}
-                  disabled={deletingId === photo.id}
-                  className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors disabled:opacity-50"
-                  title="Delete photo"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              </div>
             </div>
 
             {/* Info */}
@@ -132,6 +131,40 @@ export function GalleryGrid({ photos }: GalleryGridProps) {
           </div>
         ))}
       </div>
+
+      {/* Reusable Lightbox with Admin Actions */}
+      <Lightbox
+        images={lightboxImages}
+        currentIndex={lightboxIndex ?? 0}
+        isOpen={lightboxIndex !== null}
+        onClose={() => setLightboxIndex(null)}
+        onNext={handleNext}
+        onPrevious={handlePrevious}
+        adminActions={{
+          onEdit: (image) => {
+            const photo = photos.find((p) => p.id === image.id);
+            if (photo) handleEdit(photo);
+          },
+          onDelete: (image) => {
+            const photo = photos.find((p) => p.id === image.id);
+            if (photo) handleDeleteClick(photo);
+          },
+          isDeleting: isDeleting,
+        }}
+      />
+
+      {/* Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={deletingPhoto !== null}
+        title="Delete Photo"
+        message={`Are you sure you want to delete "${deletingPhoto?.title}"? This action cannot be undone and the photo will be permanently removed from your gallery.`}
+        confirmLabel="Delete Photo"
+        cancelLabel="Cancel"
+        variant="danger"
+        isLoading={isDeleting}
+        onConfirm={handleDeleteConfirm}
+        onCancel={() => setDeletingPhoto(null)}
+      />
 
       {/* Edit Modal */}
       {editingPhoto && (
