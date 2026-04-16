@@ -54,7 +54,7 @@ function AdminLayoutContent({ children }: { children: ReactNode }) {
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-h-0">
         {/* Header */}
-        <header className="bg-luxury-light border-b border-[#333333] px-4 lg:px-6 py-4 flex items-center justify-between flex-shrink-0">
+        <header className="bg-luxury-light border-b border-[#333333] px-4 lg:px-6 py-4 flex items-center justify-between shrink-0">
           {/* Mobile menu button */}
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}

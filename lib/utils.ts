@@ -1,4 +1,7 @@
+import { CloudinaryUploadOptions, CloudinaryUploadResult } from "@/types";
 import client from "./api/client";
+import cloudinary from "./cloudinary/upload";
+import { UploadApiErrorResponse, UploadApiResponse } from "cloudinary";
 
 /**
  * Validates a phone number for WhatsApp
@@ -55,3 +58,4 @@ export function formatMetricValue(metric: { value: string; label: string }) {
       return metric.value;
   }
 }
+

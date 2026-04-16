@@ -44,20 +44,38 @@ export interface Metric {
  * Site configuration structure
  * Contains all site metadata, contact information, and social links
  */
-export interface SiteConfig {
-  name: string;
-  tagline: string;
-  description: string;
-  contact: {
-    whatsapp: string;
-    email: string;
-    phone: string;
-    location: string;
-  };
-  social?: {
-    instagram?: string;
-    facebook?: string;
-    twitter?: string;
-    linkedin?: string;
-  };
+
+export interface CloudinaryUploadResult {
+  public_id: string;
+  secure_url: string;
+  width: number;
+  height: number;
+  format: string;
+  resource_type: string;
+  created_at: string;
+  bytes: number;
+}
+
+export interface CloudinaryTransformation {
+  width?: number;
+  height?: number;
+  crop?: string;
+  quality?: string | number;
+  format?: string;
+  gravity?: string;
+  radius?: string | number;
+  effect?: string;
+  overlay?: string;
+  underlay?: string;
+  opacity?: number;
+  angle?: number;
+  border?: string;
+  background?: string;
+}
+
+export interface CloudinaryUploadOptions {
+  folder?: string;
+  transformation?: Array<CloudinaryTransformation>;
+  quality?: string | number;
+  format?: string;
 }
