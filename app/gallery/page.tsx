@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import GalleryGrid from "@/components/gallery/GalleryGrid";
 import Lightbox from "@/components/gallery/Lightbox";
+import GallerySkeleton from "@/components/ui/GallerySkeleton";
 import { getPublicGalleryPhotos } from "@/lib/actions/gallery";
 import { GalleryItem } from "@/types";
 
@@ -70,13 +71,8 @@ export default function GalleryPage() {
           </p>
         </div>
 
-        {/* Loading State */}
-        {loading && (
-          <div className="text-center py-16">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-luxury-accent"></div>
-            <p className="text-luxury-text-muted mt-4">Loading gallery...</p>
-          </div>
-        )}
+        {/* Loading Skeleton */}
+        {loading && <GallerySkeleton />}
 
         {/* Gallery Grid */}
         {!loading && galleryItems.length > 0 && (

@@ -1,5 +1,6 @@
 import HeroSection from "@/components/home/HeroSection";
 import FeaturedWorks from "@/components/home/FeaturedWorks";
+import FeaturedWorksSkeleton from "@/components/ui/FeaturedWorksSkeleton";
 import MetricsSection from "@/components/home/MetricsSection";
 import BrandContentSection from "@/components/home/BrandContentSection";
 import TestimonialsSection from "@/components/home/TestimonialsSection";
@@ -8,18 +9,9 @@ import { getPublicGalleryPhotos } from "@/lib/actions/gallery";
 import { testimonials } from "@/config/testimonials";
 import { getMetrics } from "@/lib/supabase/server";
 import { GalleryItem } from "@/types";
+import { Suspense } from "react";
 
-export default async function Home() {
-  // Fetch metrics from Supabase
-  const supabaseMetrics = await getMetrics();
-  
-  // Transform Supabase data to match component interface
-  const transformedMetrics = supabaseMetrics.map(metric => ({
-    id: metric.id,
-    value: metric.value,
-    label: metric.label
-  }));
-
+async function FeaturedWorksSection() {
   // Fetch gallery photos from database
   const galleryResult = await getPublicGalleryPhotos();
   const galleryPhotos = galleryResult.success ? galleryResult.data : [];
@@ -33,6 +25,20 @@ export default async function Home() {
     category: photo.category,
   }));
 
+  return <FeaturedWorks items={galleryItems} maxItems={6} />;
+}
+
+export default async function Home() {
+  // Fetch metrics from Supabase
+  const supabaseMetrics = await getMetrics();
+  
+  // Transform Supabase data to match component interface
+  const transformedMetrics = supabaseMetrics.map(metric => ({
+    id: metric.id,
+    value: metric.value,
+    label: metric.label
+  }));
+
   return (
     <main>
       <HeroSection
@@ -44,7 +50,9 @@ export default async function Home() {
 
       <MetricsSection metrics={transformedMetrics} />
 
-      <FeaturedWorks items={galleryItems} maxItems={6} />
+      <Suspense fallback={<FeaturedWorksSkeleton />}>
+        <FeaturedWorksSection />
+      </Suspense>
 
       <BrandContentSection
         title="Crafted for Queens"

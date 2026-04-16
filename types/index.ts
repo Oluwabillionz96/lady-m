@@ -12,9 +12,8 @@
 export interface GalleryItem {
   id: string;
   imageUrl: string;
-  alt: string;
-  title?: string;
-  category?: string;
+  title: string;
+  category: string;
 }
 
 /**

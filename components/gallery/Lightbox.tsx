@@ -134,7 +134,6 @@ export default function Lightbox({
     >
       {/* Close Button */}
       <div className="absolute top-4 flex gap-4 right-4 z-50">
-        
         {adminActions && (
           <div className="flex items-center gap-4">
             {adminActions.onEdit && (
@@ -226,7 +225,7 @@ export default function Lightbox({
           >
             <Image
               src={currentImage.imageUrl}
-              alt={currentImage.alt}
+              alt={currentImage.title}
               fill
               loading="eager"
               className="object-contain"
