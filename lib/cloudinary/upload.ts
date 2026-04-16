@@ -38,23 +38,8 @@ export async function uploadImage(
     const result = await cloudinary.uploader.upload(uploadInput, {
       folder,
       quality,
-      format,
-      transformation: [
-        { quality },
-        { format },
-        ...transformation
-      ],
-      // Generate responsive breakpoints
-      responsive_breakpoints: {
-        create_derived: true,
-        bytes_step: 20000,
-        min_width: 200,
-        max_width: 1200,
-        transformation: {
-          quality: 'auto',
-          format: 'auto'
-        }
-      }
+      // Remove invalid transformations
+      transformation: transformation.length > 0 ? transformation : undefined,
     });
 
     return {
@@ -80,9 +65,7 @@ export async function uploadGalleryPhoto(file: Buffer | string) {
   return uploadImage(file, {
     folder: 'lady-m-portfolio/gallery',
     transformation: [
-      { width: 1200, height: 800, crop: 'limit' },
-      { quality: 'auto:good' },
-      { format: 'auto' }
+      { width: 1200, height: 800, crop: 'limit' }
     ]
   });
 }
@@ -95,9 +78,7 @@ export async function uploadTestimonialPhoto(file: Buffer | string) {
     folder: 'lady-m-portfolio/testimonials',
     transformation: [
       { width: 200, height: 200, crop: 'fill', gravity: 'face' },
-      { radius: 'max' },
-      { quality: 'auto:good' },
-      { format: 'auto' }
+      { radius: 'max' }
     ]
   });
 }

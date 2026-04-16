@@ -1,0 +1,132 @@
+"use client"
+
+import { useState } from 'react'
+import { X, Save } from 'lucide-react'
+import { GalleryPhoto } from '@/types'
+import Image from 'next/image'
+
+interface GalleryPhotoFormProps {
+  photo: GalleryPhoto
+  onSave: (id: string, data: { title: string; category: string }) => Promise<void>
+  onCancel: () => void
+}
+
+export function GalleryPhotoForm({ photo, onSave, onCancel }: GalleryPhotoFormProps) {
+  const [title, setTitle] = useState(photo.title)
+  const [category, setCategory] = useState(photo.category)
+  const [saving, setSaving] = useState(false)
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (!title.trim() || !category.trim()) {
+      return
+    }
+
+    setSaving(true)
+    try {
+      await onSave(photo.id, { title: title.trim(), category: category.trim() })
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-luxury-light rounded-lg w-full max-w-2xl">
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b border-luxury-accent/20">
+          <h2 className="text-xl font-semibold text-luxury-text">Edit Photo</h2>
+          <button
+            onClick={onCancel}
+            className="text-luxury-text-muted hover:text-luxury-text transition-colors"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Content */}
+        <form onSubmit={handleSubmit} className="p-6">
+          <div className="flex gap-6">
+            {/* Preview */}
+            <div className="shrink-0">
+              <img
+                src={photo.image_url}
+                alt={photo.title}
+                className="w-32 h-32 object-cover rounded-lg border border-luxury-accent/20"
+              />
+            </div>
+
+            {/* Form Fields */}
+            <div className="flex-1 space-y-4">
+              <div>
+                <label htmlFor="title" className="block text-sm font-medium text-luxury-text mb-2">
+                  Title *
+                </label>
+                <input
+                  id="title"
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  className="w-full px-4 py-3 bg-luxury-dark border border-luxury-accent/30 rounded-lg text-luxury-text placeholder-luxury-text-muted focus:outline-none focus:ring-2 focus:ring-luxury-accent transition-all"
+                  placeholder="Enter photo title"
+                  required
+                  disabled={saving}
+                />
+              </div>
+
+              <div>
+                <label htmlFor="category" className="block text-sm font-medium text-luxury-text mb-2">
+                  Category *
+                </label>
+                <select
+                  id="category"
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  className="w-full px-4 py-3 bg-luxury-dark border border-luxury-accent/30 rounded-lg text-luxury-text focus:outline-none focus:ring-2 focus:ring-luxury-accent transition-all"
+                  required
+                  disabled={saving}
+                >
+                  <option value="">Select a category</option>
+                  <option value="portfolio">Portfolio</option>
+                  <option value="bridal">Bridal</option>
+                  <option value="casual">Casual</option>
+                  <option value="formal">Formal</option>
+                  <option value="alterations">Alterations</option>
+                </select>
+              </div>
+
+              {/* Photo Info */}
+              <div className="text-sm text-luxury-text-muted">
+                <p>Uploaded: {new Date(photo.created_at).toLocaleDateString()}</p>
+                {photo.updated_at !== photo.created_at && (
+                  <p>Last updated: {new Date(photo.updated_at).toLocaleDateString()}</p>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="flex justify-end gap-3 mt-6 pt-6 border-t border-luxury-accent/20">
+            <button
+              type="button"
+              onClick={onCancel}
+              className="px-4 py-2 text-luxury-text-muted hover:text-luxury-text transition-colors"
+              disabled={saving}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={saving || !title.trim() || !category.trim()}
+              className="flex items-center gap-2 bg-luxury-accent text-luxury-dark px-6 py-2 rounded-lg hover:bg-luxury-accent-light transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Save className="w-4 h-4" />
+              {saving ? 'Saving...' : 'Save Changes'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
+}

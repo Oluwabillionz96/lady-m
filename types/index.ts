@@ -79,3 +79,28 @@ export interface CloudinaryUploadOptions {
   quality?: string | number;
   format?: string;
 }
+
+export interface GalleryPhoto {
+  id: string;
+  image_url: string;
+  title: string;
+  category: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CreateGalleryPhotoData {
+  image_url: string;
+  title: string;
+  category: string;
+}
+
+export type Result<T> =
+  | {
+      success: true;
+      data: T;
+    }
+  | {
+      success: false;
+      error: string;
+    };

@@ -41,7 +41,7 @@ function AdminLayoutContent({ children }: { children: ReactNode }) {
       )}
 
       {/* Sidebar */}
-      <div
+      {/* <div
         className={`
         fixed lg:static inset-y-0 left-0 z-50 w-64 bg-luxury-light border-r border-[#333333] 
         flex flex-col transform transition-transform duration-300 ease-in-out
@@ -49,7 +49,7 @@ function AdminLayoutContent({ children }: { children: ReactNode }) {
       `}
       >
         <AdminNavigation />
-      </div>
+      </div> */}
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-h-0">
