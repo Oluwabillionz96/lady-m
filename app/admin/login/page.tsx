@@ -41,7 +41,7 @@ export default function LoginPage() {
       if (responseData?.session) {
         toast.success("Login Successful");
         // console.log({ responseData });
-        return router.push("/admin/dashboard");
+        return router.push("/admin");
       }
 
       if (error) {

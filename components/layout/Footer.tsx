@@ -1,11 +1,19 @@
+"use client";
+
 import Link from "next/link";
 import { siteConfig } from "@/config/site";
-import { getSiteSettings } from "@/lib/supabase/server";
 import { FaFacebook, FaInstagram } from "react-icons/fa6";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { usePathname } from "next/navigation";
 
-export default async function Footer() {
+export default function Footer() {
   const currentYear = new Date().getFullYear();
-  const siteSettings = await getSiteSettings();
+  const siteSettings = useSiteSettings();
+  const pathname = usePathname();
+
+  if (pathname.startsWith("/admin")) {
+    return null;
+  }
 
   const { phone, email, location, facebook, instagram } = siteSettings;
 

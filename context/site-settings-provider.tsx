@@ -6,6 +6,8 @@ interface SiteSettings {
   phone?: string;
   email?: string;
   location?: string;
+  facebook?: string;
+  instagram?: string;
 }
 
 const SiteSettingsContext = createContext<SiteSettings>({});

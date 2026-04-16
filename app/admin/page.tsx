@@ -13,7 +13,7 @@ const AdminPage = () => {
       if (!auth?.user) {
         router.push("/admin/login");
       } else {
-        router.push("/admin/dashboard");
+        router.push("/admin");
       }
     }
   }, [auth?.loading, auth?.user, router]);
