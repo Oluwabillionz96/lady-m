@@ -1,8 +1,3 @@
-import { CloudinaryUploadOptions, CloudinaryUploadResult } from "@/types";
-import client from "./api/client";
-import cloudinary from "./cloudinary/upload";
-import { UploadApiErrorResponse, UploadApiResponse } from "cloudinary";
-
 /**
  * Validates a phone number for WhatsApp
  * Accepts formats: +1234567890, 1234567890, +1-234-567-8900, etc.
@@ -58,4 +53,3 @@ export function formatMetricValue(metric: { value: string; label: string }) {
       return metric.value;
   }
 }
-

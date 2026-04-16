@@ -21,8 +21,7 @@ export async function uploadImage(
   const {
     folder = "lady-m-portfolio",
     transformation = [],
-    quality = "auto",
-    format = "auto"
+    quality = "auto"
   } = options;
 
   try {

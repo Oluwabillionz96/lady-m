@@ -20,7 +20,7 @@ export default function FeaturedWorks({
         {/* Section Header */}
         <div className="text-center mb-12 md:mb-16">
           <h2 className="font-family-heading text-4xl md:text-5xl lg:text-6xl font-bold text-luxury-accent mb-4">
-            Featured Works
+            Recent Works
           </h2>
           <p className="text-luxury-text-muted text-lg md:text-xl max-w-2xl mx-auto">
             A glimpse into our portfolio of custom-tailored masterpieces
