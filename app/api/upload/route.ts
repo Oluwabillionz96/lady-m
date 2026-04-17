@@ -1,8 +1,8 @@
 import {
   fileToBuffer,
   uploadImage,
-  validateImageFile,
 } from "@/lib/cloudinary/upload";
+import { validateImageFile } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {

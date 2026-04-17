@@ -129,27 +129,27 @@ export function generateOptimizedUrl(
 /**
  * Validate file type and size
  */
-export function validateImageFile(file: File): { valid: boolean; error?: string } {
-  // Check file type
-  const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-  if (!allowedTypes.includes(file.type)) {
-    return {
-      valid: false,
-      error: 'Invalid file type. Only JPEG, PNG, and WebP images are allowed.'
-    };
-  }
+// export function validateImageFile(file: File): { valid: boolean; error?: string } {
+//   // Check file type
+//   const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+//   if (!allowedTypes.includes(file.type)) {
+//     return {
+//       valid: false,
+//       error: 'Invalid file type. Only JPEG, PNG, and WebP images are allowed.'
+//     };
+//   }
 
-  // Check file size (max 10MB)
-  const maxSize = 10 * 1024 * 1024; // 10MB in bytes
-  if (file.size > maxSize) {
-    return {
-      valid: false,
-      error: 'File size too large. Maximum size is 10MB.'
-    };
-  }
+//   // Check file size (max 10MB)
+//   const maxSize = 10 * 1024 * 1024; // 10MB in bytes
+//   if (file.size > maxSize) {
+//     return {
+//       valid: false,
+//       error: 'File size too large. Maximum size is 10MB.'
+//     };
+//   }
 
-  return { valid: true };
-}
+//   return { valid: true };
+// }
 
 /**
  * Convert File to Buffer for upload

@@ -53,3 +53,23 @@ export function formatMetricValue(metric: { value: string; label: string }) {
       return metric.value;
   }
 }
+
+export function validateImageFile(file: File): { valid: boolean; error?: string } {
+  const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+  if (!allowedTypes.includes(file.type)) {
+    return {
+      valid: false,
+      error: "Invalid file type. Only JPEG, PNG, and WebP images are allowed.",
+    };
+  }
+
+  const maxSize = 10 * 1024 * 1024;
+  if (file.size > maxSize) {
+    return {
+      valid: false,
+      error: "File size too large. Maximum size is 10MB.",
+    };
+  }
+
+  return { valid: true };
+}

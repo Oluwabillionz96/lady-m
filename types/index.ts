@@ -103,3 +103,13 @@ export type Result<T> =
       success: false;
       error: string;
     };
+
+export interface UploadedFile {
+  file: File;
+  preview: string;
+  title: string;
+  category: string;
+  uploading: boolean;
+  uploaded: boolean;
+  error?: string;
+}
