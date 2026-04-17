@@ -6,7 +6,7 @@ import BrandContentSection from "@/components/home/BrandContentSection";
 import TestimonialsSection from "@/components/home/TestimonialsSection";
 import FinalCTA from "@/components/home/FinalCTA";
 import { getPublicGalleryPhotos } from "@/lib/actions/gallery";
-import { testimonials } from "@/config/testimonials";
+import { getPublicTestimonials } from "@/lib/actions/testimonials";
 import { getMetrics } from "@/lib/supabase/server";
 import { GalleryItem } from "@/types";
 import { Suspense } from "react";
@@ -15,7 +15,7 @@ async function FeaturedWorksSection() {
   // Fetch gallery photos from database
   const galleryResult = await getPublicGalleryPhotos();
   const galleryPhotos = galleryResult.success ? galleryResult.data : [];
-  
+
   // Convert database photos to GalleryItem format
   const galleryItems: GalleryItem[] = galleryPhotos.map((photo) => ({
     id: photo.id,
@@ -31,12 +31,27 @@ async function FeaturedWorksSection() {
 export default async function Home() {
   // Fetch metrics from Supabase
   const supabaseMetrics = await getMetrics();
-  
+
   // Transform Supabase data to match component interface
-  const transformedMetrics = supabaseMetrics.map(metric => ({
+  const transformedMetrics = supabaseMetrics.map((metric) => ({
     id: metric.id,
     value: metric.value,
-    label: metric.label
+    label: metric.label,
+  }));
+
+  // Fetch testimonials from database
+  const testimonialsResult = await getPublicTestimonials();
+  const dbTestimonials = testimonialsResult.success
+    ? testimonialsResult.data
+    : [];
+
+  // Transform database testimonials to match component interface
+  const transformedTestimonials = dbTestimonials.map((testimonial) => ({
+    id: testimonial.id,
+    name: testimonial.name,
+    photoUrl: testimonial.photo_url,
+    text: testimonial.text,
+    role: testimonial.role,
   }));
 
   return (
@@ -62,7 +77,9 @@ Our approach combines timeless elegance with modern sophistication, creating gar
         imageUrl="https://images.unsplash.com/photo-1558769132-cb1aea1c8f5f?q=80&w=1974&auto=format&fit=crop"
       />
 
-      <TestimonialsSection testimonials={testimonials} />
+      {transformedTestimonials.length > 0 && (
+        <TestimonialsSection testimonials={transformedTestimonials} />
+      )}
 
       <FinalCTA
         title="Ready to Own Your Style?"

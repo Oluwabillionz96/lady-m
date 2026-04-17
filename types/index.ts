@@ -23,7 +23,7 @@ export interface GalleryItem {
 export interface Testimonial {
   id: string;
   name: string;
-  photoUrl: string;
+  photoUrl?: string;
   text: string;
   role?: string;
 }
