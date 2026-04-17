@@ -49,6 +49,8 @@ export default async function RootLayout({
                 color: "#f5f5f5",
               },
             }}
+            expand
+            visibleToasts={3}
           />
         </SiteSettingsProvider>
       </body>

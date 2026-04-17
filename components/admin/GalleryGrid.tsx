@@ -8,6 +8,7 @@ import { GalleryPhotoForm } from "./GalleryPhotoForm";
 import { ConfirmDialog } from "./ConfirmDialog";
 import Lightbox from "@/components/gallery/Lightbox";
 import Image from "next/image";
+import { Edit, Trash2 } from "lucide-react";
 
 interface GalleryGridProps {
   photos: GalleryPhoto[];
@@ -38,8 +39,6 @@ export function GalleryGrid({ photos }: GalleryGridProps) {
       } else {
         toast.error(result.error);
       }
-    } catch {
-      toast.error("Failed to delete photo");
     } finally {
       setIsDeleting(false);
     }
@@ -62,8 +61,8 @@ export function GalleryGrid({ photos }: GalleryGridProps) {
       } else {
         toast.error(result.error);
       }
-    } catch {
-      toast.error("Failed to update photo");
+    } finally {
+      // Error is already handled
     }
   };
 
@@ -98,11 +97,13 @@ export function GalleryGrid({ photos }: GalleryGridProps) {
         {photos.map((photo, index) => (
           <div
             key={photo.id}
-            onClick={() => setLightboxIndex(index)}
-            className="bg-luxury-light rounded-lg overflow-hidden border border-luxury-accent/20 hover:border-luxury-accent/40 transition-all cursor-pointer group"
+            className="bg-luxury-light rounded-lg overflow-hidden border border-luxury-accent/20 hover:border-luxury-accent/40 transition-all group"
           >
             {/* Image */}
-            <div className="aspect-square relative overflow-hidden">
+            <div
+              className="aspect-square relative overflow-hidden cursor-pointer"
+              onClick={() => setLightboxIndex(index)}
+            >
               <Image
                 src={photo.image_url}
                 alt={photo.title}
@@ -114,18 +115,39 @@ export function GalleryGrid({ photos }: GalleryGridProps) {
             {/* Info */}
             <div className="p-4">
               <h3
-                className="font-medium text-luxury-text truncate"
+                className="font-medium text-luxury-text truncate cursor-pointer hover:text-luxury-accent transition-colors"
                 title={photo.title}
+                onClick={() => setLightboxIndex(index)}
               >
                 {photo.title}
               </h3>
-              <div className="flex items-center justify-between mt-2">
+              <div className="flex items-center justify-between mt-2 mb-3">
                 <span className="text-sm text-luxury-text-muted capitalize">
                   {photo.category}
                 </span>
                 <span className="text-xs text-luxury-text-muted">
                   {new Date(photo.created_at).toLocaleDateString()}
                 </span>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex gap-2">
+                <button
+                  onClick={() => handleEdit(photo)}
+                  className="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 sm:py-2 bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 rounded-lg transition-colors text-sm sm:text-xs font-medium"
+                  title="Edit photo"
+                >
+                  <Edit className="w-5 h-5 sm:w-4 sm:h-4" />
+                  <span className="hidden sm:inline">Edit</span>
+                </button>
+                <button
+                  onClick={() => handleDeleteClick(photo)}
+                  className="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 sm:py-2 bg-red-500/10 text-red-400 hover:bg-red-500/20 rounded-lg transition-colors text-sm sm:text-xs font-medium"
+                  title="Delete photo"
+                >
+                  <Trash2 className="w-5 h-5 sm:w-4 sm:h-4" />
+                  <span className="hidden sm:inline">Delete</span>
+                </button>
               </div>
             </div>
           </div>

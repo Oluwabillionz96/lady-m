@@ -110,9 +110,12 @@ export function UploadWidget() {
     // Validate form data with Zod
     const validationResult = photoUploadSchema.safeParse(fileData.formData);
     if (!validationResult.success) {
-      const errors = validationResult.error;
-      updateFile(index, { error: errors.message });
-      toast.error(`Validation failed: ${errors}`);
+      // Get the first error message
+      const firstError =
+        JSON.parse(validationResult.error?.message)[0].message ||
+        "Validation failed";
+      updateFile(index, { error: firstError });
+      toast.error(firstError);
       return;
     }
 
@@ -173,7 +176,7 @@ export function UploadWidget() {
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="flex items-center gap-2 bg-luxury-accent text-luxury-dark px-4 py-2 rounded-lg hover:bg-luxury-accent-light transition-colors font-medium text-sm sm:text-base"
+        className="flex items-center gap-2 w-full md:w-fit justify-center bg-luxury-accent text-luxury-dark px-4 md:py-2 py-4 rounded-lg hover:bg-luxury-accent-light transition-colors font-medium text-sm sm:text-base"
       >
         <Plus className="w-4 h-4" />
         <span className="hidden sm:inline">Upload Photos</span>
