@@ -6,17 +6,36 @@ import { toast } from "sonner";
 import { createTestimonial } from "@/lib/actions/testimonials";
 import CreateButton from "./create-button";
 import Image from "next/image";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+
+const testimonialSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters").max(100, "Name is too long"),
+  role: z.string().max(100, "Role is too long").optional(),
+  text: z.string().min(10, "Testimonial must be at least 10 characters").max(1000, "Testimonial is too long"),
+});
+
+type TestimonialFormData = z.infer<typeof testimonialSchema>;
 
 export function TestimonialForm() {
   const [isOpen, setIsOpen] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [formData, setFormData] = useState({
-    name: "",
-    role: "",
-    text: "",
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm<TestimonialFormData>({
+    resolver: zodResolver(testimonialSchema),
+    defaultValues: {
+      name: "",
+      role: "",
+      text: "",
+    },
   });
 
   const handlePhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -50,15 +69,7 @@ export function TestimonialForm() {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!formData.name.trim() || !formData.text.trim()) {
-      toast.error("Name and testimonial text are required");
-      return;
-    }
-
-    setIsSubmitting(true);
+  const onSubmit = async (data: TestimonialFormData) => {
     try {
       let photoUrl = "";
 
@@ -85,15 +96,15 @@ export function TestimonialForm() {
       }
 
       const result = await createTestimonial({
-        name: formData.name.trim(),
-        role: formData.role.trim(),
-        text: formData.text.trim(),
+        name: data.name.trim(),
+        role: data.role?.trim(),
+        text: data.text.trim(),
         photo_url: photoUrl,
       });
 
       if (result.success) {
         toast.success("Testimonial added successfully");
-        setFormData({ name: "", role: "", text: "" });
+        reset();
         removePhoto();
         setIsOpen(false);
       } else {
@@ -103,14 +114,12 @@ export function TestimonialForm() {
       toast.error(
         error instanceof Error ? error.message : "Failed to add testimonial"
       );
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
   const handleClose = () => {
     removePhoto();
-    setFormData({ name: "", role: "", text: "" });
+    reset();
     setIsOpen(false);
   };
 
@@ -136,8 +145,9 @@ export function TestimonialForm() {
 
             {/* Form */}
             <form
-              onSubmit={handleSubmit}
+              onSubmit={handleSubmit(onSubmit)}
               className="flex-1 overflow-y-auto p-4 sm:p-6"
+              id="testimonial_form"
             >
               <div className="space-y-4">
                 {/* Photo Upload */}
@@ -192,14 +202,19 @@ export function TestimonialForm() {
                   </label>
                   <input
                     type="text"
-                    value={formData.name}
-                    onChange={(e) =>
-                      setFormData({ ...formData, name: e.target.value })
-                    }
-                    className="w-full px-4 py-2.5 bg-luxury-dark border border-luxury-accent/30 rounded-lg text-luxury-text focus:outline-none focus:ring-2 focus:ring-luxury-accent transition-all"
+                    {...register("name")}
+                    className={`w-full px-4 py-2.5 bg-luxury-dark border rounded-lg text-luxury-text focus:outline-none focus:ring-2 transition-all ${
+                      errors.name
+                        ? "border-red-500 focus:ring-red-500"
+                        : "border-luxury-accent/30 focus:ring-luxury-accent"
+                    }`}
                     placeholder="e.g., Sophia Martinez"
-                    required
                   />
+                  {errors.name && (
+                    <p className="text-red-400 text-xs mt-1.5">
+                      {errors.name.message}
+                    </p>
+                  )}
                 </div>
 
                 {/* Role */}
@@ -209,13 +224,19 @@ export function TestimonialForm() {
                   </label>
                   <input
                     type="text"
-                    value={formData.role}
-                    onChange={(e) =>
-                      setFormData({ ...formData, role: e.target.value })
-                    }
-                    className="w-full px-4 py-2.5 bg-luxury-dark border border-luxury-accent/30 rounded-lg text-luxury-text focus:outline-none focus:ring-2 focus:ring-luxury-accent transition-all"
+                    {...register("role")}
+                    className={`w-full px-4 py-2.5 bg-luxury-dark border rounded-lg text-luxury-text focus:outline-none focus:ring-2 transition-all ${
+                      errors.role
+                        ? "border-red-500 focus:ring-red-500"
+                        : "border-luxury-accent/30 focus:ring-luxury-accent"
+                    }`}
                     placeholder="e.g., CEO, Fashion Blogger, or leave blank"
                   />
+                  {errors.role && (
+                    <p className="text-red-400 text-xs mt-1.5">
+                      {errors.role.message}
+                    </p>
+                  )}
                 </div>
 
                 {/* Testimonial Text */}
@@ -224,15 +245,20 @@ export function TestimonialForm() {
                     Testimonial *
                   </label>
                   <textarea
-                    value={formData.text}
-                    onChange={(e) =>
-                      setFormData({ ...formData, text: e.target.value })
-                    }
+                    {...register("text")}
                     rows={6}
-                    className="w-full px-4 py-2.5 bg-luxury-dark border border-luxury-accent/30 rounded-lg text-luxury-text focus:outline-none focus:ring-2 focus:ring-luxury-accent transition-all resize-none"
+                    className={`w-full px-4 py-2.5 bg-luxury-dark border rounded-lg text-luxury-text focus:outline-none focus:ring-2 transition-all resize-none ${
+                      errors.text
+                        ? "border-red-500 focus:ring-red-500"
+                        : "border-luxury-accent/30 focus:ring-luxury-accent"
+                    }`}
                     placeholder="Enter the client's testimonial..."
-                    required
                   />
+                  {errors.text && (
+                    <p className="text-red-400 text-xs mt-1.5">
+                      {errors.text.message}
+                    </p>
+                  )}
                 </div>
               </div>
             </form>
@@ -248,7 +274,8 @@ export function TestimonialForm() {
                 Cancel
               </button>
               <button
-                onClick={handleSubmit}
+                type="submit"
+                form="testimonial_form"
                 disabled={isSubmitting}
                 className="px-4 py-2 bg-luxury-accent text-luxury-dark rounded-lg hover:bg-luxury-accent-light transition-colors font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               >

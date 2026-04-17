@@ -28,7 +28,7 @@ export function TestimonialCard({ testimonial }: TestimonialCardProps) {
       } else {
         toast.error(result.error || "Failed to delete testimonial");
       }
-    } catch (error) {
+    } catch {
       toast.error("Failed to delete testimonial");
     } finally {
       setIsDeleting(false);
@@ -88,7 +88,7 @@ export function TestimonialCard({ testimonial }: TestimonialCardProps) {
 
         {/* Testimonial Text */}
         <p className="text-luxury-text-muted text-sm leading-relaxed line-clamp-4">
-          "{testimonial.text}"
+          &quot;{testimonial.text}&quot;
         </p>
 
         {/* Date */}
@@ -100,11 +100,11 @@ export function TestimonialCard({ testimonial }: TestimonialCardProps) {
       {/* Delete Confirmation Dialog */}
       <ConfirmDialog
         isOpen={showDeleteDialog}
-        onClose={() => setShowDeleteDialog(false)}
+        onCancel={() => setShowDeleteDialog(false)}
         onConfirm={handleDelete}
         title="Delete Testimonial"
         message={`Are you sure you want to delete ${testimonial.name}'s testimonial? This action cannot be undone.`}
-        confirmText="Delete"
+        confirmLabel="Delete"
         isLoading={isDeleting}
       />
 
