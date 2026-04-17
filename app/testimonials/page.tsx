@@ -7,7 +7,9 @@ import { ArrowLeft } from "lucide-react";
 
 export default async function TestimonialsPage() {
   const testimonialsResult = await getPublicTestimonials();
-  const testimonials = testimonialsResult.success ? testimonialsResult.data : [];
+  const testimonials = testimonialsResult.success
+    ? testimonialsResult.data
+    : [];
 
   return (
     <main className="min-h-screen bg-luxury-dark">
@@ -29,7 +31,8 @@ export default async function TestimonialsPage() {
               Client Testimonials
             </h1>
             <p className="text-luxury-text-muted text-lg md:text-xl max-w-2xl mx-auto">
-              Hear from the women we've empowered through exceptional tailoring
+              Hear from the women we&apos;ve empowered through exceptional
+              tailoring
             </p>
           </div>
         </div>

@@ -21,8 +21,6 @@ export interface CreateTestimonialData {
   photo_url?: string;
 }
 
-const supabase = await createServerClient();
-
 export async function getTestimonials(): Promise<Result<Testimonial[]>> {
   const { getTableRecords } = await import("./utils");
   // TODO: Implement pagination with page/pageSize parameters
@@ -35,6 +33,8 @@ export async function createTestimonial(
   data: CreateTestimonialData,
 ): Promise<Result<Testimonial>> {
   try {
+    const supabase = await createServerClient();
+
     // Validate required fields
     if (!data.name || !data.text) {
       return {

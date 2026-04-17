@@ -4,6 +4,8 @@ import { UploadWidget } from "@/components/admin/UploadWidget";
 import { Plus } from "lucide-react";
 import PageHeader from "@/components/admin/page-header";
 
+export const dynamic = "force-dynamic";
+
 export default async function GalleryPage() {
   const result = await getGalleryPhotos();
 

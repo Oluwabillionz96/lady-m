@@ -2,6 +2,7 @@
 
 import { Result } from "@/types";
 import { createServerClient } from "../supabase";
+
 type tableNames =
   | "gallery_photos"
   | "testimonials"

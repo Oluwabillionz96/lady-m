@@ -3,19 +3,47 @@
 import Link from "next/link";
 import { siteConfig } from "@/config/site";
 import { FaFacebook, FaInstagram } from "react-icons/fa6";
-import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { getSettings } from "@/lib/actions/settings";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
-  const siteSettings = useSiteSettings();
   const pathname = usePathname();
+  const [settings, setSettings] = useState<{
+    phone: string;
+    email: string;
+    location: string;
+    facebook: string;
+    instagram?: string;
+  }>({
+    phone: "",
+    email: "",
+    location: "",
+    facebook: "",
+    instagram: "",
+  });
+
+  useEffect(() => {
+    async function loadSettings() {
+      try {
+        const result = await getSettings();
+        if (result.success) {
+          setSettings(result.data);
+        }
+      } catch (error) {
+        console.error("Error loading settings:", error);
+      }
+    }
+
+    loadSettings();
+  }, []);
 
   if (pathname.startsWith("/admin")) {
     return null;
   }
 
-  const { phone, email, location, facebook, instagram } = siteSettings;
+  const { phone, email, location, facebook, instagram } = settings;
 
   return (
     <footer className="bg-luxury-darker border-t border-luxury-accent/20">

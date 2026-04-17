@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { Testimonial } from "@/lib/actions/testimonials";
 import { TestimonialCard } from "./TestimonialCard";
 

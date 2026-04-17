@@ -1,9 +1,10 @@
 import { getTestimonials } from "@/lib/actions/testimonials";
 import { TestimonialsGrid } from "@/components/admin/TestimonialsGrid";
 import { TestimonialForm } from "@/components/admin/TestimonialForm";
-import { Plus, ArrowLeft } from "lucide-react";
-import Link from "next/link";
+import { Plus } from "lucide-react";
 import PageHeader from "@/components/admin/page-header";
+
+export const dynamic = "force-dynamic";
 
 export default async function TestimonialsPage() {
   const result = await getTestimonials();

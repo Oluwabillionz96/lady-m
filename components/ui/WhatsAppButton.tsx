@@ -1,10 +1,9 @@
 "use client";
 
-// import { siteConfig } from "@/config/site";
 import { getWhatsAppUrl } from "@/lib/utils";
 import { toast } from "sonner";
 import { FaWhatsapp } from "react-icons/fa6";
-import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { getSettings } from "@/lib/actions/settings";
 
 interface WhatsAppButtonProps {
   text?: string;
@@ -16,24 +15,32 @@ interface WhatsAppButtonProps {
 
 export default function WhatsAppButton({
   text = "Contact on WhatsApp",
-
   message = "Hi Lady M, I'm interested in your tailoring services!",
   variant = "primary",
   size = "md",
   className,
 }: WhatsAppButtonProps) {
-  const { phone } = useSiteSettings();
-  const handleClick = () => {
-    const url = getWhatsAppUrl(phone ?? "", message);
-
-    if (!url) {
-      toast.error(
-        "Unable to connect. Please try again or contact us directly.",
-      );
-      return;
-    }
-
+  const handleClick = async () => {
     try {
+      // Fetch phone number on click
+      const result = await getSettings();
+      
+      if (!result.success || !result.data.phone) {
+        toast.error(
+          "Unable to connect. Please try again or contact us directly.",
+        );
+        return;
+      }
+
+      const url = getWhatsAppUrl(result.data.phone, message);
+
+      if (!url) {
+        toast.error(
+          "Unable to connect. Please try again or contact us directly.",
+        );
+        return;
+      }
+
       window.open(url, "_blank", "noopener,noreferrer");
     } catch (error) {
       console.error("Failed to open WhatsApp:", error);

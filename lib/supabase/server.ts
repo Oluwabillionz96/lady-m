@@ -108,6 +108,7 @@ export async function getSiteSettings() {
 
     return settings;
   } catch (error) {
+    // Handle build-time errors gracefully (when cookies() is not available)
     console.error("Error fetching site settings:", error);
     return {};
   }

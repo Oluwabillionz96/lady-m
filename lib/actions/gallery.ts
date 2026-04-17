@@ -4,7 +4,6 @@ import { CreateGalleryPhotoData, GalleryPhoto, Result } from "@/types";
 import { createServerClient } from "../supabase";
 import { revalidatePath } from "next/cache";
 import { deleteImage } from "../cloudinary/upload";
-const supabase = await createServerClient();
 
 export async function getGalleryPhotos(): Promise<Result<GalleryPhoto[]>> {
   const { getTableRecords } = await import("./utils");
@@ -18,6 +17,7 @@ export async function createGalleryPhoto(
   data: CreateGalleryPhotoData,
 ): Promise<Result<GalleryPhoto>> {
   try {
+    const supabase = await createServerClient();
 
     // Validate required fields
     if (!data.image_url || !data.title || !data.category) {
@@ -58,6 +58,7 @@ export async function updateGalleryPhoto(
   data: Partial<CreateGalleryPhotoData>,
 ): Promise<Result<GalleryPhoto>> {
   try {
+    const supabase = await createServerClient();
 
     // Validate ID
     if (!id) {
@@ -94,6 +95,7 @@ export async function updateGalleryPhoto(
 
 export async function deleteGalleryPhoto(id: string): Promise<Result<boolean>> {
   try {
+    const supabase = await createServerClient();
 
     // Validate ID
     if (!id) {
@@ -166,6 +168,7 @@ export async function getPublicGalleryPhotos(): Promise<
   Result<GalleryPhoto[]>
 > {
   try {
+    const supabase = await createServerClient();
 
     const { data, error } = await supabase
       .from("gallery_photos")
