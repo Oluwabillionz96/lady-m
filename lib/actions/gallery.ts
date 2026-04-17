@@ -223,3 +223,67 @@ export async function getGalleryPhotoCount(): Promise<Result<number>> {
     return { success: false, error: "An unexpected error occurred" };
   }
 }
+
+// Batch upload photos (handles Cloudinary upload + Supabase insert)
+export async function batchUploadPhotos(
+  photos: Array<{
+    file: File;
+    title: string;
+    category: string;
+  }>,
+): Promise<Result<GalleryPhoto[]>> {
+  try {
+    // Step 1: Upload all files to Cloudinary
+    const formData = new FormData();
+    photos.forEach((photo) => {
+      formData.append("files", photo.file);
+    });
+
+    const uploadResponse = await fetch(
+      `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/upload`,
+      {
+        method: "POST",
+        body: formData,
+      },
+    );
+
+    if (!uploadResponse.ok) {
+      return { success: false, error: "Failed to upload files to Cloudinary" };
+    }
+
+    const uploadResult = await uploadResponse.json();
+    if (!uploadResult.success || !uploadResult.data) {
+      return {
+        success: false,
+        error: uploadResult.error || "Upload failed",
+      };
+    }
+
+    // Step 2: Insert all photos into Supabase
+    const supabase = await createServerClient();
+    const photosToInsert = photos.map((photo, index) => ({
+      image_url: uploadResult.data[index].secure_url,
+      title: photo.title.trim(),
+      category: photo.category,
+    }));
+
+    const { data: insertedPhotos, error } = await supabase
+      .from("gallery_photos")
+      .insert(photosToInsert)
+      .select();
+
+    if (error) {
+      console.error("Error inserting photos into database:", error);
+      return { success: false, error: "Failed to save photos to database" };
+    }
+
+    // Refresh both admin and public gallery caches
+    revalidatePath("/admin/gallery");
+    revalidatePath("/gallery");
+
+    return { success: true, data: insertedPhotos || [] };
+  } catch (error) {
+    console.error("Unexpected error during batch upload:", error);
+    return { success: false, error: "An unexpected error occurred" };
+  }
+}

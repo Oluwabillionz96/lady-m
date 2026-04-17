@@ -20,12 +20,33 @@ const UploadWidgetBody = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = (selectedFiles: FileList) => {
+    const MAX_PHOTOS = 10;
     const newFiles: UploadedFile[] = [];
+    let duplicateCount = 0;
+    let exceededCount = 0;
 
     Array.from(selectedFiles).forEach((file) => {
       const validation = validateImageFile(file);
       if (!validation.valid) {
         toast.error(`${file.name}: ${validation.error}`);
+        return;
+      }
+
+      // Check if file already exists in the list (by name and size)
+      const isDuplicate = files.some(
+        (existingFile) =>
+          existingFile.file.name === file.name &&
+          existingFile.file.size === file.size,
+      );
+
+      if (isDuplicate) {
+        duplicateCount++;
+        return;
+      }
+
+      // Check if we've reached the limit
+      if (files.length + newFiles.length >= MAX_PHOTOS) {
+        exceededCount++;
         return;
       }
 
@@ -38,6 +59,20 @@ const UploadWidgetBody = ({
         uploaded: false,
       });
     });
+
+    if (duplicateCount > 0) {
+      toast.info(
+        duplicateCount === 1
+          ? "1 duplicate omitted"
+          : `${duplicateCount} duplicates omitted`,
+      );
+    }
+
+    if (exceededCount > 0) {
+      toast.error(
+        `Maximum ${MAX_PHOTOS} photos per upload. ${exceededCount} photo${exceededCount > 1 ? "s" : ""} not added.`,
+      );
+    }
 
     setFiles((prev) => [...prev, ...newFiles]);
 

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { createGalleryPhoto } from "@/lib/actions/gallery";
+import { batchUploadPhotos } from "@/lib/actions/gallery";
 import { UploadedFile } from "@/types";
 import UploadButton from "./upload-button";
 import UploadWidgetHeader from "./upload-widget-header";
@@ -39,25 +39,13 @@ export function UploadWidget() {
     updateFile(index, { uploading: true, error: undefined });
 
     try {
-      const formData = new FormData();
-      formData.append("files", fileData.file);
-
-      const uploadResponse = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!uploadResponse.ok) throw new Error("Upload failed");
-
-      const uploadResult = await uploadResponse.json();
-      if (!uploadResult.success)
-        throw new Error(uploadResult.error || "Upload failed");
-
-      const result = await createGalleryPhoto({
-        image_url: uploadResult.data[0].secure_url,
-        title: fileData.title.trim(),
-        category: fileData.category,
-      });
+      const result = await batchUploadPhotos([
+        {
+          file: fileData.file,
+          title: fileData.title.trim(),
+          category: fileData.category,
+        },
+      ]);
 
       if (!result.success) throw new Error(result.error);
 
@@ -79,10 +67,81 @@ export function UploadWidget() {
   };
 
   const uploadAll = async () => {
+    // Validate all files first
+    const filesToUpload = [];
+    let hasErrors = false;
+
     for (let i = 0; i < files.length; i++) {
-      if (!files[i].uploaded && !files[i].uploading) {
-        await uploadFile(i);
+      if (files[i].uploaded || files[i].uploading) continue;
+
+      const fileData = files[i];
+
+      // Validate
+      if (!fileData.title.trim()) {
+        updateFile(i, { error: "Title is required" });
+        hasErrors = true;
+        continue;
       }
+      if (fileData.title.trim().length < 3) {
+        updateFile(i, { error: "Title must be at least 3 characters" });
+        hasErrors = true;
+        continue;
+      }
+      if (!fileData.category) {
+        updateFile(i, { error: "Category is required" });
+        hasErrors = true;
+        continue;
+      }
+
+      filesToUpload.push({
+        file: fileData.file,
+        title: fileData.title.trim(),
+        category: fileData.category,
+        index: i,
+      });
+    }
+
+    if (hasErrors) {
+      toast.error("Please fix validation errors before uploading");
+      return;
+    }
+
+    if (filesToUpload.length === 0) {
+      toast.info("No photos to upload");
+      return;
+    }
+
+    // Mark all as uploading
+    filesToUpload.forEach(({ index }) => {
+      updateFile(index, { uploading: true, error: undefined });
+    });
+
+    try {
+      const result = await batchUploadPhotos(
+        filesToUpload.map(({ file, title, category }) => ({
+          file,
+          title,
+          category,
+        })),
+      );
+
+      if (!result.success) throw new Error(result.error);
+
+      // Mark all as uploaded
+      filesToUpload.forEach(({ index }) => {
+        updateFile(index, { uploading: false, uploaded: true });
+      });
+
+      toast.success(`${filesToUpload.length} photos uploaded successfully`);
+    } catch (error) {
+      // Mark all as failed
+      filesToUpload.forEach(({ index }) => {
+        updateFile(index, {
+          uploading: false,
+          error: error instanceof Error ? error.message : "Upload failed",
+        });
+      });
+      toast.error("Batch upload failed");
     }
   };
 
