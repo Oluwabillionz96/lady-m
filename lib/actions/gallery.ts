@@ -4,36 +4,20 @@ import { CreateGalleryPhotoData, GalleryPhoto, Result } from "@/types";
 import { createServerClient } from "../supabase";
 import { revalidatePath } from "next/cache";
 import { deleteImage } from "../cloudinary/upload";
+const supabase = await createServerClient();
 
 export async function getGalleryPhotos(): Promise<Result<GalleryPhoto[]>> {
-  try {
-    const supabase = await createServerClient();
-
-    // TODO: Implement pagination with page/pageSize parameters
-    // Use .range(from, to) for offset-based pagination
-    // Add count: 'exact' to get total count for pagination UI
-    const { data, error } = await supabase
-      .from("gallery_photos")
-      .select("*")
-      .order("created_at", { ascending: false });
-
-    if (error) {
-      console.error("Error fetching gallery photos:", error);
-      return { success: false, error: "Failed to fetch gallery photos" };
-    }
-
-    return { success: true, data: data || [] };
-  } catch (error) {
-    console.error("Unexpected error:", error);
-    return { success: false, error: "An unexpected error occurred" };
-  }
+  const { getTableRecords } = await import("./utils");
+  // TODO: Implement pagination with page/pageSize parameters
+  // Use .range(from, to) for offset-based pagination
+  // Add count: 'exact' to get total count for pagination UI
+  return getTableRecords<GalleryPhoto>("gallery_photos");
 }
 
 export async function createGalleryPhoto(
   data: CreateGalleryPhotoData,
 ): Promise<Result<GalleryPhoto>> {
   try {
-    const supabase = await createServerClient();
 
     // Validate required fields
     if (!data.image_url || !data.title || !data.category) {
@@ -74,7 +58,6 @@ export async function updateGalleryPhoto(
   data: Partial<CreateGalleryPhotoData>,
 ): Promise<Result<GalleryPhoto>> {
   try {
-    const supabase = await createServerClient();
 
     // Validate ID
     if (!id) {
@@ -111,7 +94,6 @@ export async function updateGalleryPhoto(
 
 export async function deleteGalleryPhoto(id: string): Promise<Result<boolean>> {
   try {
-    const supabase = await createServerClient();
 
     // Validate ID
     if (!id) {
@@ -184,7 +166,6 @@ export async function getPublicGalleryPhotos(): Promise<
   Result<GalleryPhoto[]>
 > {
   try {
-    const supabase = await createServerClient();
 
     const { data, error } = await supabase
       .from("gallery_photos")
@@ -199,27 +180,6 @@ export async function getPublicGalleryPhotos(): Promise<
     return { success: true, data: data || [] };
   } catch (error) {
     console.error("Unexpected error fetching public gallery photos:", error);
-    return { success: false, error: "An unexpected error occurred" };
-  }
-}
-
-// Get total gallery photo count
-export async function getGalleryPhotoCount(): Promise<Result<number>> {
-  try {
-    const supabase = await createServerClient();
-
-    const { count, error } = await supabase
-      .from("gallery_photos")
-      .select("*", { count: "exact", head: true });
-
-    if (error) {
-      console.error("Error fetching gallery photo count:", error);
-      return { success: false, error: "Failed to fetch photo count" };
-    }
-
-    return { success: true, data: count || 0 };
-  } catch (error) {
-    console.error("Unexpected error fetching gallery photo count:", error);
     return { success: false, error: "An unexpected error occurred" };
   }
 }

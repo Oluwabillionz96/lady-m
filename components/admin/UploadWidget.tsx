@@ -4,7 +4,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { batchUploadPhotos } from "@/lib/actions/gallery";
 import { UploadedFile } from "@/types";
-import UploadButton from "./upload-button";
+import CreateButton from "./create-button";
 import UploadWidgetHeader from "./upload-widget-header";
 import UploadWidgetBody from "./upload-widget-body";
 import UploadWidgetFooter from "./upload-widget-footer";
@@ -147,7 +147,7 @@ export function UploadWidget() {
 
   return (
     <>
-      <UploadButton setIsOpen={setIsOpen} />
+      <CreateButton setIsOpen={setIsOpen} />
 
       {isOpen && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-end sm:items-center justify-center z-50">

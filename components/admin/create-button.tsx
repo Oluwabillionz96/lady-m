@@ -1,7 +1,7 @@
 import { Plus } from "lucide-react";
 import { Dispatch, SetStateAction } from "react";
 
-const UploadButton = ({
+const CreateButton = ({
   setIsOpen,
 }: {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
@@ -18,4 +18,4 @@ const UploadButton = ({
   );
 };
 
-export default UploadButton;
+export default CreateButton;

@@ -11,29 +11,37 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { getGalleryPhotoCount } from "@/lib/actions/gallery";
+import { getTableCount } from "@/lib/actions/utils";
 
 const AdminPage = () => {
   const auth = useAuth();
   const [photoCount, setPhotoCount] = useState<number | null>(null);
+  const [testimonialsCount, setTestimonialsCount] = useState<number | null>(null);
   const [loadingCount, setLoadingCount] = useState(true);
 
-  // Fetch photo count on component mount
+  // Fetch counts on component mount
   useEffect(() => {
-    async function fetchPhotoCount() {
+    async function fetchCounts() {
       try {
-        const result = await getGalleryPhotoCount();
-        if (result.success) {
-          setPhotoCount(result.data);
+        const [photosResult, testimonialsResult] = await Promise.all([
+          getTableCount("gallery_photos"),
+          getTableCount("testimonials"),
+        ]);
+
+        if (photosResult.success) {
+          setPhotoCount(photosResult.data);
+        }
+        if (testimonialsResult.success) {
+          setTestimonialsCount(testimonialsResult.data);
         }
       } catch (error) {
-        console.error("Error fetching photo count:", error);
+        console.error("Error fetching counts:", error);
       } finally {
         setLoadingCount(false);
       }
     }
 
-    fetchPhotoCount();
+    fetchCounts();
   }, []);
 
   // Show loading state while auth is loading
@@ -89,7 +97,9 @@ const AdminPage = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-luxury-text-muted text-sm">Testimonials</p>
-              <p className="text-2xl font-bold text-luxury-text">--</p>
+              <p className="text-2xl font-bold text-luxury-text">
+                {loadingCount ? "--" : testimonialsCount}
+              </p>
             </div>
             <MessageSquare className="w-8 h-8 text-luxury-accent" />
           </div>
