@@ -45,14 +45,18 @@ export default async function Home() {
     ? testimonialsResult.data
     : [];
 
-  // Transform database testimonials to match component interface
-  const transformedTestimonials = dbTestimonials.map((testimonial) => ({
-    id: testimonial.id,
-    name: testimonial.name,
-    photoUrl: testimonial.photo_url,
-    text: testimonial.text,
-    role: testimonial.role,
-  }));
+  // Transform database testimonials to match component interface (show first 3 on home)
+  const transformedTestimonials = dbTestimonials
+    .slice(0, 3)
+    .map((testimonial) => ({
+      id: testimonial.id,
+      name: testimonial.name,
+      photoUrl: testimonial.photo_url,
+      text: testimonial.text,
+      role: testimonial.role,
+    }));
+
+  const totalTestimonials = dbTestimonials.length;
 
   return (
     <main>
@@ -78,7 +82,10 @@ Our approach combines timeless elegance with modern sophistication, creating gar
       />
 
       {transformedTestimonials.length > 0 && (
-        <TestimonialsSection testimonials={transformedTestimonials} />
+        <TestimonialsSection
+          testimonials={transformedTestimonials}
+          totalCount={totalTestimonials}
+        />
       )}
 
       <FinalCTA

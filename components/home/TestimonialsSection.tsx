@@ -1,15 +1,21 @@
 import Image from "next/image";
+import Link from "next/link";
 import Card from "@/components/ui/Card";
 import { Testimonial } from "@/types";
 import { BiSolidQuoteLeft } from "react-icons/bi";
+import { ArrowRight } from "lucide-react";
 
 interface TestimonialsSectionProps {
   testimonials: Testimonial[];
+  totalCount?: number;
 }
 
 export default function TestimonialsSection({
   testimonials,
+  totalCount = 0,
 }: TestimonialsSectionProps) {
+  const showViewAll = totalCount > 3;
+
   return (
     <section className="py-16 md:py-24 bg-luxury-darker">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -62,6 +68,19 @@ export default function TestimonialsSection({
             </Card>
           ))}
         </div>
+
+        {/* View All Button */}
+        {showViewAll && (
+          <div className="text-center mt-12">
+            <Link
+              href="/testimonials"
+              className="inline-flex items-center gap-2 bg-luxury-accent text-luxury-dark px-6 py-3 rounded-lg hover:bg-luxury-accent-light transition-colors font-medium"
+            >
+              View All Testimonials
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        )}
       </div>
     </section>
   );
