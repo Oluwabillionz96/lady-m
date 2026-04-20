@@ -1,10 +1,5 @@
-import {
-  Dispatch,
-  SetStateAction,
-  useRef,
-  useState,
-} from "react";
-import { SettingCards } from "./SettingsForm";
+import { Dispatch, SetStateAction, useRef, useState } from "react";
+import { SettingCards } from "./settings-form";
 import { SettingsData, updateSettings } from "@/lib/actions/settings";
 import { Check, Edit2, Loader2, Upload, X } from "lucide-react";
 import Image from "next/image";

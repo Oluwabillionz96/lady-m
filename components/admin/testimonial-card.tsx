@@ -6,8 +6,8 @@ import { deleteTestimonial } from "@/lib/actions/testimonials";
 import { Pencil, Trash2, User } from "lucide-react";
 import { toast } from "sonner";
 import Image from "next/image";
-import { ConfirmDialog } from "./ConfirmDialog";
-import { TestimonialEditForm } from "./TestimonialEditForm";
+import { ConfirmDialog } from "./confirm-dialog";
+import { TestimonialEditForm } from "./testimonial-edit-form";
 
 interface TestimonialCardProps {
   testimonial: Testimonial;

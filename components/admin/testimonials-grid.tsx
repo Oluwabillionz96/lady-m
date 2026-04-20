@@ -1,7 +1,7 @@
 "use client";
 
 import { Testimonial } from "@/lib/actions/testimonials";
-import { TestimonialCard } from "./TestimonialCard";
+import { TestimonialCard } from "./testimonial-card";
 
 interface TestimonialsGridProps {
   testimonials: Testimonial[];

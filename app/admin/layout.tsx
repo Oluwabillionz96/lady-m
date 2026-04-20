@@ -2,7 +2,7 @@
 import { ReactNode, useState } from "react";
 import { usePathname } from "next/navigation";
 import { AuthProvider } from "@/context/auth-provider";
-import { AdminNavigation } from "@/components/admin/AdminNavigation";
+import { AdminNavigation } from "@/components/admin/admin-navigation";
 import useAuth from "@/hooks/useAuth";
 import { Menu, X } from "lucide-react";
 import AdminLayoutLoading from "@/components/admin/admin-layout-loading";

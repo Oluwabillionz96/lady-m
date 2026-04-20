@@ -1,13 +1,13 @@
 import { SettingsData } from "@/lib/actions/settings";
-import { Edit2} from "lucide-react";
+import { Edit2 } from "lucide-react";
 import { Dispatch, SetStateAction } from "react";
-import { SettingCards } from "./SettingsForm";
+import { SettingCards } from "./settings-form";
 
 const SettingsContactInfo = ({
   settingCards,
   setEditingKey,
 }: {
-  settingCards: SettingCards
+  settingCards: SettingCards;
   setEditingKey: Dispatch<SetStateAction<keyof SettingsData | null>>;
 }) => {
   return (

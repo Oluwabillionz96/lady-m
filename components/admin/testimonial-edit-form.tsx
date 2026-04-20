@@ -7,15 +7,7 @@ import { Testimonial, updateTestimonial } from "@/lib/actions/testimonials";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-
-const testimonialSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters").max(100, "Name is too long"),
-  role: z.string().max(100, "Role is too long").optional(),
-  text: z.string().min(10, "Testimonial must be at least 10 characters").max(1000, "Testimonial is too long"),
-});
-
-type TestimonialFormData = z.infer<typeof testimonialSchema>;
+import { testimonialSchema, TestimonialFormData } from "@/lib/schemas";
 
 interface TestimonialEditFormProps {
   testimonial: Testimonial;

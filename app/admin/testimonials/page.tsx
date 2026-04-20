@@ -1,6 +1,6 @@
 import { getTestimonials } from "@/lib/actions/testimonials";
-import { TestimonialsGrid } from "@/components/admin/TestimonialsGrid";
-import { TestimonialForm } from "@/components/admin/TestimonialForm";
+import { TestimonialsGrid } from "@/components/admin/testimonials-grid";
+import { TestimonialForm } from "@/components/admin/testimonial-form";
 import { Plus } from "lucide-react";
 import PageHeader from "@/components/admin/page-header";
 

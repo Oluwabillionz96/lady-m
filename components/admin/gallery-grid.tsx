@@ -4,8 +4,8 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { deleteGalleryPhoto, updateGalleryPhoto } from "@/lib/actions/gallery";
 import { GalleryPhoto } from "@/types";
-import { GalleryPhotoForm } from "./GalleryPhotoForm";
-import { ConfirmDialog } from "./ConfirmDialog";
+import { GalleryPhotoForm } from "./gallery-photo-form";
+import { ConfirmDialog } from "./confirm-dialog";
 import Lightbox from "@/components/gallery/Lightbox";
 import Image from "next/image";
 import { Edit, Trash2 } from "lucide-react";
@@ -50,7 +50,7 @@ export function GalleryGrid({ photos }: GalleryGridProps) {
 
   const handleUpdate = async (
     id: string,
-    data: { title: string; category: string }
+    data: { title: string; category: string },
   ) => {
     try {
       const result = await updateGalleryPhoto(id, data);

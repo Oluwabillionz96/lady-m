@@ -1,6 +1,6 @@
 import { getSettings } from "@/lib/actions/settings";
 import { getMetrics } from "@/lib/actions/metrics";
-import { SettingsForm } from "@/components/admin/SettingsForm";
+import { SettingsForm } from "@/components/admin/settings-form";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
@@ -23,20 +23,18 @@ export default async function SettingsPage() {
           >
             <ArrowLeft className="w-5 h-5" />
           </Link>
-          <h1 className="text-2xl font-bold text-luxury-text">
-            Site Settings
-          </h1>
+          <h1 className="text-2xl font-bold text-luxury-text">Site Settings</h1>
         </div>
 
         {/* Desktop Header */}
         <div className="hidden md:block">
-          <h1 className="text-2xl font-bold text-luxury-text">
-            Site Settings
-          </h1>
+          <h1 className="text-2xl font-bold text-luxury-text">Site Settings</h1>
         </div>
 
         <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4">
-          <p className="text-red-400">Error loading settings: {settingsResult.error}</p>
+          <p className="text-red-400">
+            Error loading settings: {settingsResult.error}
+          </p>
         </div>
       </div>
     );
@@ -78,7 +76,7 @@ export default async function SettingsPage() {
       </div>
 
       {/* Settings Form */}
-      <SettingsForm 
+      <SettingsForm
         initialSettings={settingsResult.data}
         initialMetrics={metricsResult.success ? metricsResult.data : []}
       />

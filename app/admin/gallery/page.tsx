@@ -1,6 +1,6 @@
 import { getGalleryPhotos } from "@/lib/actions/gallery";
-import { GalleryGrid } from "@/components/admin/GalleryGrid";
-import { UploadWidget } from "@/components/admin/UploadWidget";
+import { GalleryGrid } from "@/components/admin/gallery-grid";
+import { UploadWidget } from "@/components/admin/upload-widget";
 import { Plus } from "lucide-react";
 import PageHeader from "@/components/admin/page-header";
 
