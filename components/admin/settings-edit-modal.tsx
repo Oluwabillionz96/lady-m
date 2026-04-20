@@ -4,6 +4,8 @@ import { useState } from "react";
 import { SettingKey } from "./settings-form";
 import BaseModal from "@/components/ui/base-modal";
 import Button from "@/components/ui/button";
+import { FormInput } from "@/components/ui/form-input";
+import { FormTextarea } from "@/components/ui/form-textarea";
 
 interface EditModalProps {
   settingKey: SettingKey;
@@ -57,20 +59,20 @@ export default function EditModal({
       }
     >
       {type === "textarea" ? (
-        <textarea
+        <FormTextarea
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           rows={8}
-          className="w-full px-4 py-2.5 bg-luxury-dark border border-luxury-accent/30 rounded-lg text-luxury-text focus:outline-none focus:ring-2 focus:ring-luxury-accent transition-all resize-none"
           placeholder={placeholder}
+          disabled={isSubmitting}
         />
       ) : (
-        <input
+        <FormInput
           type={type}
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
-          className="w-full px-4 py-2.5 bg-luxury-dark border border-luxury-accent/30 rounded-lg text-luxury-text focus:outline-none focus:ring-2 focus:ring-luxury-accent transition-all"
           placeholder={placeholder}
+          disabled={isSubmitting}
         />
       )}
     </BaseModal>

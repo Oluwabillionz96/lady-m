@@ -8,6 +8,8 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Eye, EyeOff } from "lucide-react";
 import client from "@/lib/api/client";
+import { FormInput } from "@/components/ui/form-input";
+import Button from "@/components/ui/button";
 
 // Zod schema for login form validation
 const loginSchema = z.object({
@@ -40,7 +42,6 @@ export default function LoginPage() {
 
       if (responseData?.session) {
         toast.success("Login Successful");
-        // console.log({ responseData });
         return router.push("/admin");
       }
 
@@ -72,47 +73,28 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             {/* Email Field */}
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-luxury-text mb-2"
-              >
-                Email Address
-              </label>
-              <input
-                id="email"
-                type="email"
-                {...register("email")}
-                className={`w-full px-4 py-3 bg-luxury-dark border rounded-lg text-luxury-text placeholder-luxury-text-muted focus:outline-none focus:ring-2 focus:ring-luxury-accent transition-all ${
-                  errors.email ? "border-red-500" : "border-luxury-accent/30"
-                }`}
-                placeholder="admin@example.com"
-                disabled={isSubmitting}
-              />
-              {errors.email && (
-                <p className="mt-2 text-sm text-red-500">
-                  {errors.email.message}
-                </p>
-              )}
-            </div>
+            <FormInput
+              type="email"
+              label="Email Address"
+              placeholder="admin@example.com"
+              disabled={isSubmitting}
+              error={errors.email}
+              {...register("email")}
+            />
 
             {/* Password Field */}
             <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-luxury-text mb-2"
-              >
+              <label className="block text-sm font-medium text-luxury-text mb-2">
                 Password
               </label>
               <div className="relative">
                 <input
-                  id="password"
                   type={showPassword ? "text" : "password"}
                   {...register("password")}
-                  className={`w-full px-4 py-3 pr-12 bg-luxury-dark border rounded-lg text-luxury-text placeholder-luxury-text-muted focus:outline-none focus:ring-2 focus:ring-luxury-accent transition-all ${
+                  className={`w-full px-4 py-2.5 pr-12 bg-luxury-dark border rounded-lg text-luxury-text focus:outline-none focus:ring-2 transition-all ${
                     errors.password
-                      ? "border-red-500"
-                      : "border-luxury-accent/30"
+                      ? "border-red-500 focus:ring-red-500"
+                      : "border-luxury-accent/30 focus:ring-luxury-accent"
                   }`}
                   placeholder="••••••••"
                   disabled={isSubmitting}
@@ -131,20 +113,23 @@ export default function LoginPage() {
                 </button>
               </div>
               {errors.password && (
-                <p className="mt-2 text-sm text-red-500">
+                <p className="text-red-400 text-xs mt-1.5">
                   {errors.password.message}
                 </p>
               )}
             </div>
 
             {/* Submit Button */}
-            <button
+            <Button
               type="submit"
+              variant="primary"
+              size="lg"
               disabled={isSubmitting}
-              className="w-full bg-luxury-accent text-luxury-dark font-semibold py-3 px-4 rounded-lg hover:bg-luxury-accent-light transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+              loading={isSubmitting}
+              className="w-full"
             >
               {isSubmitting ? "Signing in..." : "Sign In"}
-            </button>
+            </Button>
           </form>
         </div>
 

@@ -1,6 +1,5 @@
 "use client";
 
-import { ChevronDown } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { GalleryPhoto } from "@/types";
@@ -9,6 +8,8 @@ import BaseModal from "@/components/ui/base-modal";
 import Button from "@/components/ui/button";
 import { galleryPhotoSchema, GalleryPhotoFormData } from "@/lib/schemas";
 import { CONFIG } from "@/config/app";
+import { FormInput } from "@/components/ui/form-input";
+import { FormSelect } from "@/components/ui/form-select";
 
 interface GalleryPhotoFormProps {
   photo: GalleryPhoto;
@@ -39,6 +40,11 @@ export function GalleryPhotoForm({
   const onSubmit = async (data: GalleryPhotoFormData) => {
     await onSave(photo.id, { title: data.title, category: data.category });
   };
+
+  const categoryOptions = CONFIG.gallery.categories.map((cat) => ({
+    value: cat,
+    label: cat.charAt(0).toUpperCase() + cat.slice(1),
+  }));
 
   return (
     <BaseModal
@@ -80,67 +86,22 @@ export function GalleryPhotoForm({
 
           {/* Form Fields */}
           <div className="flex-1 space-y-4">
-            <div>
-              <label
-                htmlFor="title"
-                className="block text-sm font-medium text-luxury-text mb-2"
-              >
-                Title *
-              </label>
-              <input
-                id="title"
-                type="text"
-                {...register("title")}
-                className={`w-full px-4 py-3 bg-luxury-dark border rounded-lg text-luxury-text placeholder-luxury-text-muted focus:outline-none focus:ring-2 transition-all ${
-                  errors.title
-                    ? "border-red-500 focus:ring-red-500"
-                    : "border-luxury-accent/30 focus:ring-luxury-accent"
-                }`}
-                placeholder="Enter photo title"
-                disabled={isSubmitting}
-              />
-              {errors.title && (
-                <p className="text-red-400 text-xs mt-1.5">
-                  {errors.title.message}
-                </p>
-              )}
-            </div>
+            <FormInput
+              type="text"
+              label="Title *"
+              placeholder="Enter photo title"
+              disabled={isSubmitting}
+              error={errors.title}
+              {...register("title")}
+            />
 
-            <div>
-              <label
-                htmlFor="category"
-                className="block text-sm font-medium text-luxury-text mb-2"
-              >
-                Category *
-              </label>
-              <div className="relative">
-                <select
-                  id="category"
-                  {...register("category")}
-                  className={`w-full px-4 py-3 pr-10 bg-luxury-dark border rounded-lg text-luxury-text focus:outline-none focus:ring-2 transition-all appearance-none ${
-                    errors.category
-                      ? "border-red-500 focus:ring-red-500"
-                      : "border-luxury-accent/30 focus:ring-luxury-accent"
-                  }`}
-                  disabled={isSubmitting}
-                >
-                  <option value="">Select a category</option>
-                  {CONFIG.gallery.categories.map((cat) => (
-                    <option key={cat} value={cat}>
-                      {cat.charAt(0).toUpperCase() + cat.slice(1)}
-                    </option>
-                  ))}
-                </select>
-                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                  <ChevronDown />
-                </div>
-              </div>
-              {errors.category && (
-                <p className="text-red-400 text-xs mt-1.5">
-                  {errors.category.message}
-                </p>
-              )}
-            </div>
+            <FormSelect
+              label="Category *"
+              options={[{ value: "", label: "Select a category" }, ...categoryOptions]}
+              disabled={isSubmitting}
+              error={errors.category}
+              {...register("category")}
+            />
           </div>
         </div>
       </form>
