@@ -1,4 +1,5 @@
 import { getSettings } from "@/lib/actions/settings";
+import { getMetrics } from "@/lib/actions/metrics";
 import { SettingsForm } from "@/components/admin/SettingsForm";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
@@ -6,9 +7,12 @@ import Link from "next/link";
 export const dynamic = "force-dynamic";
 
 export default async function SettingsPage() {
-  const result = await getSettings();
+  const [settingsResult, metricsResult] = await Promise.all([
+    getSettings(),
+    getMetrics(),
+  ]);
 
-  if (!result.success) {
+  if (!settingsResult.success) {
     return (
       <div className="space-y-6">
         {/* Mobile Back Button */}
@@ -32,7 +36,7 @@ export default async function SettingsPage() {
         </div>
 
         <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4">
-          <p className="text-red-400">Error loading settings: {result.error}</p>
+          <p className="text-red-400">Error loading settings: {settingsResult.error}</p>
         </div>
       </div>
     );
@@ -74,7 +78,10 @@ export default async function SettingsPage() {
       </div>
 
       {/* Settings Form */}
-      <SettingsForm initialSettings={result.data} />
+      <SettingsForm 
+        initialSettings={settingsResult.data}
+        initialMetrics={metricsResult.success ? metricsResult.data : []}
+      />
     </div>
   );
 }

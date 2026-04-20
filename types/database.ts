@@ -71,19 +71,16 @@ export interface Database {
           id: string;
           value: string;
           label: string;
-          updated_at: string;
         };
         Insert: {
           id?: string;
           value: string;
           label: string;
-          updated_at?: string;
         };
         Update: {
           id?: string;
           value?: string;
           label?: string;
-          updated_at?: string;
         };
         Relationships: [];
       };

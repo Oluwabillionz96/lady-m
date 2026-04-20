@@ -3,6 +3,7 @@
 import { useState, useRef } from "react";
 import { toast } from "sonner";
 import { updateSettings, SettingsData } from "@/lib/actions/settings";
+import { Metric } from "@/lib/actions/metrics";
 import {
   Loader2,
   Edit2,
@@ -18,6 +19,8 @@ import Image from "next/image";
 import { FaFacebook } from "react-icons/fa6";
 import EditModal from "./settings-edit-modal";
 import SettingsContactInfo from "./settings-contact-info";
+import SettingsMetrics from "./settings-metrics";
+import MetricsEditModal from "./metrics-edit-modal";
 import { IconType } from "react-icons";
 
 export type SettingKey = keyof SettingsData;
@@ -34,11 +37,14 @@ export type SettingCards = Array<{
 
 interface SettingsFormProps {
   initialSettings: SettingsData;
+  initialMetrics?: Metric[];
 }
 
-export function SettingsForm({ initialSettings }: SettingsFormProps) {
+export function SettingsForm({ initialSettings, initialMetrics = [] }: SettingsFormProps) {
   const [settings, setSettings] = useState<SettingsData>(initialSettings);
+  const [metrics, setMetrics] = useState<Metric[]>(initialMetrics);
   const [editingKey, setEditingKey] = useState<SettingKey | null>(null);
+  const [editingMetric, setEditingMetric] = useState<Metric | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
@@ -387,6 +393,29 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
           placeholder={
             settingCards.find((s) => s.key === editingKey)?.placeholder
           }
+        />
+      )}
+
+      {/* Metrics Section */}
+      {metrics.length > 0 && (
+        <div className="pt-6 border-t border-luxury-accent/20">
+          <SettingsMetrics
+            metrics={metrics}
+            onEditClick={(metric) => setEditingMetric(metric)}
+          />
+        </div>
+      )}
+
+      {/* Metrics Edit Modal */}
+      {editingMetric && (
+        <MetricsEditModal
+          metric={editingMetric}
+          onClose={() => setEditingMetric(null)}
+          onSuccess={(updatedMetric) => {
+            setMetrics((prev) =>
+              prev.map((m) => (m.id === updatedMetric.id ? updatedMetric : m))
+            );
+          }}
         />
       )}
     </div>
