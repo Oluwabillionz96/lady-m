@@ -1,4 +1,4 @@
-import FeaturedWorksSkeleton from "@/components/ui/FeaturedWorksSkeleton";
+import FeaturedWorksSkeleton from "@/components/ui/featured-works-skeleton";
 
 export default function Loading() {
   return (

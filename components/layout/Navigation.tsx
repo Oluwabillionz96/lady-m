@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import WhatsAppButton from "@/components/ui/WhatsAppButton";
+import WhatsAppButton from "@/components/ui/whats-app-button";
 import { siteConfig } from "@/config/site";
 import { Menu, X } from "lucide-react";
 

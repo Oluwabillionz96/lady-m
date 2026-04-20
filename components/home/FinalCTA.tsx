@@ -1,4 +1,4 @@
-import WhatsAppButton from "@/components/ui/WhatsAppButton";
+import WhatsAppButton from "@/components/ui/whats-app-button";
 
 interface FinalCTAProps {
   title: string;

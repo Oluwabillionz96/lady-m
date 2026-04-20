@@ -7,10 +7,10 @@ export default function GallerySkeleton() {
           className="relative aspect-4/5 overflow-hidden rounded-lg bg-luxury-light"
         >
           {/* Base skeleton */}
-          <div className="absolute inset-0 bg-gradient-to-br from-luxury-light via-luxury-accent/5 to-luxury-light animate-pulse" />
+          <div className="absolute inset-0 bg-linear-to-br from-luxury-light via-luxury-accent/5 to-luxury-light animate-pulse" />
 
           {/* Shimmer effect */}
-          <div className="absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-luxury-accent/10 to-transparent" />
+          <div className="absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] bg-linear-to-r from-transparent via-luxury-accent/10 to-transparent" />
         </div>
       ))}
     </div>

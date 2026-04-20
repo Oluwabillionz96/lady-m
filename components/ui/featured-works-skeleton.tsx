@@ -20,10 +20,10 @@ export default function FeaturedWorksSkeleton() {
               className="relative aspect-4/5 overflow-hidden rounded-lg bg-luxury-light animate-pulse"
             >
               {/* Image skeleton */}
-              <div className="absolute inset-0 bg-gradient-to-br from-luxury-light to-luxury-dark/20" />
+              <div className="absolute inset-0 bg-linear-to-br from-luxury-light to-luxury-dark/20" />
               
               {/* Content skeleton */}
-              <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-luxury-darker/90 to-transparent">
+              <div className="absolute bottom-0 left-0 right-0 p-6 bg-linear-to-t from-luxury-darker/90 to-transparent">
                 {/* Title skeleton */}
                 <div className="h-6 bg-luxury-accent/30 rounded mb-2 w-4/5 animate-pulse" />
                 {/* Category skeleton */}

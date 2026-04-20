@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import GalleryGrid from "@/components/gallery/GalleryGrid";
 import Lightbox from "@/components/gallery/Lightbox";
-import GallerySkeleton from "@/components/ui/GallerySkeleton";
+import GallerySkeleton from "@/components/ui/gallery-skeleton";
 import { getPublicGalleryPhotos } from "@/lib/actions/gallery";
 import { GalleryItem } from "@/types";
 

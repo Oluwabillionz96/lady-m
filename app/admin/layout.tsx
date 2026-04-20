@@ -5,6 +5,7 @@ import { AuthProvider } from "@/context/auth-provider";
 import { AdminNavigation } from "@/components/admin/AdminNavigation";
 import useAuth from "@/hooks/useAuth";
 import { Menu, X } from "lucide-react";
+import AdminLayoutLoading from "@/components/admin/admin-layout-loading";
 
 function AdminLayoutContent({ children }: { children: ReactNode }) {
   const authData = useAuth();
@@ -15,11 +16,7 @@ function AdminLayoutContent({ children }: { children: ReactNode }) {
 
   // Show loading state
   if (authData?.loading) {
-    return (
-      <div className="min-h-screen bg-luxury-dark flex items-center justify-center">
-        <div className="text-white">Loading...</div>
-      </div>
-    );
+    return <AdminLayoutLoading />;
   }
 
   // If on login page, render without admin layout

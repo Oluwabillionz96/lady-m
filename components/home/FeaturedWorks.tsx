@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import WhatsAppButton from "@/components/ui/WhatsAppButton";
+import WhatsAppButton from "@/components/ui/whats-app-button";
 import { GalleryItem } from "@/types";
 
 interface FeaturedWorksProps {
@@ -53,7 +53,9 @@ export default function FeaturedWorks({
                     </h3>
                   )}
                   {item.category && (
-                    <p className="text-luxury-accent text-sm">{item.category}</p>
+                    <p className="text-luxury-accent text-sm">
+                      {item.category}
+                    </p>
                   )}
                 </div>
               </div>
