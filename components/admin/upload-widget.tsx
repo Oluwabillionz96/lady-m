@@ -8,9 +8,10 @@ import CreateButton from "./create-button";
 import UploadWidgetHeader from "./upload-widget-header";
 import UploadWidgetBody from "./upload-widget-body";
 import UploadWidgetFooter from "./upload-widget-footer";
+import { useModal } from "@/hooks/useModal";
 
 export function UploadWidget() {
-  const [isOpen, setIsOpen] = useState(false);
+  const { isOpen, open, close } = useModal();
   const [files, setFiles] = useState<UploadedFile[]>([]);
 
   const updateFile = (index: number, updates: Partial<UploadedFile>) => {
@@ -63,7 +64,7 @@ export function UploadWidget() {
   const closeModal = () => {
     files.forEach((file) => URL.revokeObjectURL(file.preview));
     setFiles([]);
-    setIsOpen(false);
+    close();
   };
 
   const uploadAll = async () => {
@@ -147,7 +148,7 @@ export function UploadWidget() {
 
   return (
     <>
-      <CreateButton setIsOpen={setIsOpen} />
+      <CreateButton setIsOpen={open} />
 
       {isOpen && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-end sm:items-center justify-center z-50">

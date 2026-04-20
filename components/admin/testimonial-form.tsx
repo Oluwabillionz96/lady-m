@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useRef } from "react";
 import { Upload, X } from "lucide-react";
 import { toast } from "sonner";
 import { createTestimonial } from "@/lib/actions/testimonials";
@@ -11,9 +11,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { testimonialSchema, TestimonialFormData } from "@/lib/schemas";
 import BaseModal from "@/components/ui/base-modal";
 import Button from "@/components/ui/button";
+import { useModal } from "@/hooks/useModal";
+import { useState } from "react";
 
 export function TestimonialForm() {
-  const [isOpen, setIsOpen] = useState(false);
+  const { isOpen, open, close } = useModal();
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -97,13 +99,13 @@ export function TestimonialForm() {
         toast.success("Testimonial added successfully");
         reset();
         removePhoto();
-        setIsOpen(false);
+        close();
       } else {
         toast.error(result.error || "Failed to add testimonial");
       }
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Failed to add testimonial"
+        error instanceof Error ? error.message : "Failed to add testimonial",
       );
     }
   };
@@ -111,12 +113,12 @@ export function TestimonialForm() {
   const handleClose = () => {
     removePhoto();
     reset();
-    setIsOpen(false);
+    close();
   };
 
   return (
     <>
-      <CreateButton setIsOpen={setIsOpen} />
+      <CreateButton setIsOpen={open} />
 
       <BaseModal
         isOpen={isOpen}
@@ -126,7 +128,11 @@ export function TestimonialForm() {
         isSubmitting={isSubmitting}
         footer={
           <div className="flex justify-end gap-3">
-            <Button variant="ghost" onClick={handleClose} disabled={isSubmitting}>
+            <Button
+              variant="ghost"
+              onClick={handleClose}
+              disabled={isSubmitting}
+            >
               Cancel
             </Button>
             <Button
@@ -201,7 +207,9 @@ export function TestimonialForm() {
               disabled={isSubmitting}
             />
             {errors.name && (
-              <p className="text-red-400 text-xs mt-1.5">{errors.name.message}</p>
+              <p className="text-red-400 text-xs mt-1.5">
+                {errors.name.message}
+              </p>
             )}
           </div>
 
@@ -222,7 +230,9 @@ export function TestimonialForm() {
               disabled={isSubmitting}
             />
             {errors.role && (
-              <p className="text-red-400 text-xs mt-1.5">{errors.role.message}</p>
+              <p className="text-red-400 text-xs mt-1.5">
+                {errors.role.message}
+              </p>
             )}
           </div>
 
@@ -243,7 +253,9 @@ export function TestimonialForm() {
               disabled={isSubmitting}
             />
             {errors.text && (
-              <p className="text-red-400 text-xs mt-1.5">{errors.text.message}</p>
+              <p className="text-red-400 text-xs mt-1.5">
+                {errors.text.message}
+              </p>
             )}
           </div>
         </form>
