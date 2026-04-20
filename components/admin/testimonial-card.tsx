@@ -8,15 +8,16 @@ import { toast } from "sonner";
 import Image from "next/image";
 import { ConfirmDialog } from "./confirm-dialog";
 import { TestimonialEditForm } from "./testimonial-edit-form";
+import { useModal } from "@/hooks/useModal";
 
 interface TestimonialCardProps {
   testimonial: Testimonial;
 }
 
 export function TestimonialCard({ testimonial }: TestimonialCardProps) {
+  const { isOpen: showDeleteDialog, open: openDeleteDialog, close: closeDeleteDialog } = useModal();
+  const { isOpen: showEditForm, open: openEditForm, close: closeEditForm } = useModal();
   const [isDeleting, setIsDeleting] = useState(false);
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [showEditForm, setShowEditForm] = useState(false);
 
   const handleDelete = async () => {
     setIsDeleting(true);
@@ -24,7 +25,7 @@ export function TestimonialCard({ testimonial }: TestimonialCardProps) {
       const result = await deleteTestimonial(testimonial.id);
       if (result.success) {
         toast.success("Testimonial deleted");
-        setShowDeleteDialog(false);
+        closeDeleteDialog();
       } else {
         toast.error(result.error || "Failed to delete testimonial");
       }
@@ -70,14 +71,14 @@ export function TestimonialCard({ testimonial }: TestimonialCardProps) {
           {/* Action Buttons */}
           <div className="flex gap-2">
             <button
-              onClick={() => setShowEditForm(true)}
+              onClick={openEditForm}
               className="p-2 md:p-2.5 text-luxury-accent hover:bg-luxury-accent/10 rounded-lg transition-colors"
               title="Edit testimonial"
             >
               <Pencil className="w-4 h-4 md:w-5 md:h-5" />
             </button>
             <button
-              onClick={() => setShowDeleteDialog(true)}
+              onClick={openDeleteDialog}
               className="p-2 md:p-2.5 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
               title="Delete testimonial"
             >
@@ -100,7 +101,7 @@ export function TestimonialCard({ testimonial }: TestimonialCardProps) {
       {/* Delete Confirmation Dialog */}
       <ConfirmDialog
         isOpen={showDeleteDialog}
-        onCancel={() => setShowDeleteDialog(false)}
+        onCancel={closeDeleteDialog}
         onConfirm={handleDelete}
         title="Delete Testimonial"
         message={`Are you sure you want to delete ${testimonial.name}'s testimonial? This action cannot be undone.`}
@@ -112,7 +113,7 @@ export function TestimonialCard({ testimonial }: TestimonialCardProps) {
       {showEditForm && (
         <TestimonialEditForm
           testimonial={testimonial}
-          onClose={() => setShowEditForm(false)}
+          onClose={closeEditForm}
         />
       )}
     </>
