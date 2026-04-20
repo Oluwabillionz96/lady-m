@@ -1,6 +1,5 @@
 "use client";
 
-import { useRef } from "react";
 import { Upload, X } from "lucide-react";
 import { toast } from "sonner";
 import { Testimonial, updateTestimonial } from "@/lib/actions/testimonials";
@@ -11,6 +10,7 @@ import { testimonialSchema, TestimonialFormData } from "@/lib/schemas";
 import BaseModal from "@/components/ui/base-modal";
 import Button from "@/components/ui/button";
 import { useState } from "react";
+import { useFileUpload } from "@/hooks/useFileUpload";
 
 interface TestimonialEditFormProps {
   testimonial: Testimonial;
@@ -21,11 +21,8 @@ export function TestimonialEditForm({
   testimonial,
   onClose,
 }: TestimonialEditFormProps) {
-  const [photoFile, setPhotoFile] = useState<File | null>(null);
-  const [photoPreview, setPhotoPreview] = useState<string>(
-    testimonial.photo_url || ""
-  );
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { file: photoFile, preview: photoPreview, fileInputRef, handleFileSelect, removeFile } = useFileUpload({ maxSize: 5 * 1024 * 1024 });
+  const [initialPhotoUrl] = useState(testimonial.photo_url || "");
 
   const {
     register,
@@ -40,38 +37,9 @@ export function TestimonialEditForm({
     },
   });
 
-  const handlePhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (!file.type.startsWith("image/")) {
-      toast.error("Please select an image file");
-      return;
-    }
-
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("Image must be less than 5MB");
-      return;
-    }
-
-    setPhotoFile(file);
-    setPhotoPreview(URL.createObjectURL(file));
-  };
-
-  const removePhoto = () => {
-    if (photoPreview && photoPreview.startsWith("blob:")) {
-      URL.revokeObjectURL(photoPreview);
-    }
-    setPhotoFile(null);
-    setPhotoPreview("");
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-  };
-
   const onSubmit = async (data: TestimonialFormData) => {
     try {
-      let photoUrl = photoPreview;
+      let photoUrl = photoPreview || initialPhotoUrl;
 
       if (photoFile) {
         const uploadFormData = new FormData();
@@ -153,7 +121,7 @@ export function TestimonialEditForm({
               />
               <button
                 type="button"
-                onClick={removePhoto}
+                onClick={removeFile}
                 className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity"
               >
                 <X className="w-6 h-6 text-white" />
@@ -173,7 +141,7 @@ export function TestimonialEditForm({
             ref={fileInputRef}
             type="file"
             accept="image/*"
-            onChange={handlePhotoSelect}
+            onChange={handleFileSelect}
             className="hidden"
           />
           <p className="text-xs text-luxury-text-muted text-center mt-2">

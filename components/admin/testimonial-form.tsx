@@ -12,13 +12,17 @@ import { testimonialSchema, TestimonialFormData } from "@/lib/schemas";
 import BaseModal from "@/components/ui/base-modal";
 import Button from "@/components/ui/button";
 import { useModal } from "@/hooks/useModal";
-import { useState } from "react";
+import { useFileUpload } from "@/hooks/useFileUpload";
 
 export function TestimonialForm() {
   const { isOpen, open, close } = useModal();
-  const [photoFile, setPhotoFile] = useState<File | null>(null);
-  const [photoPreview, setPhotoPreview] = useState<string>("");
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const {
+    file: photoFile,
+    preview: photoPreview,
+    fileInputRef,
+    handleFileSelect,
+    removeFile,
+  } = useFileUpload({ maxSize: 5 * 1024 * 1024 });
 
   const {
     register,
@@ -33,35 +37,6 @@ export function TestimonialForm() {
       text: "",
     },
   });
-
-  const handlePhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (!file.type.startsWith("image/")) {
-      toast.error("Please select an image file");
-      return;
-    }
-
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("Image must be less than 5MB");
-      return;
-    }
-
-    setPhotoFile(file);
-    setPhotoPreview(URL.createObjectURL(file));
-  };
-
-  const removePhoto = () => {
-    if (photoPreview) {
-      URL.revokeObjectURL(photoPreview);
-    }
-    setPhotoFile(null);
-    setPhotoPreview("");
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-  };
 
   const onSubmit = async (data: TestimonialFormData) => {
     try {
@@ -98,7 +73,7 @@ export function TestimonialForm() {
       if (result.success) {
         toast.success("Testimonial added successfully");
         reset();
-        removePhoto();
+        removeFile();
         close();
       } else {
         toast.error(result.error || "Failed to add testimonial");
@@ -111,7 +86,7 @@ export function TestimonialForm() {
   };
 
   const handleClose = () => {
-    removePhoto();
+    removeFile();
     reset();
     close();
   };
@@ -162,7 +137,7 @@ export function TestimonialForm() {
                 />
                 <button
                   type="button"
-                  onClick={removePhoto}
+                  onClick={removeFile}
                   className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity"
                 >
                   <X className="w-6 h-6 text-white" />
@@ -182,7 +157,7 @@ export function TestimonialForm() {
               ref={fileInputRef}
               type="file"
               accept="image/*"
-              onChange={handlePhotoSelect}
+              onChange={handleFileSelect}
               className="hidden"
             />
             <p className="text-xs text-luxury-text-muted text-center mt-2">
