@@ -11,6 +11,8 @@ import BaseModal from "@/components/ui/base-modal";
 import Button from "@/components/ui/button";
 import { useState } from "react";
 import { useFileUpload } from "@/hooks/useFileUpload";
+import { FormInput } from "@/components/ui/form-input";
+import { FormTextarea } from "@/components/ui/form-textarea";
 
 interface TestimonialEditFormProps {
   testimonial: Testimonial;
@@ -150,67 +152,34 @@ export function TestimonialEditForm({
         </div>
 
         {/* Name */}
-        <div>
-          <label className="block text-sm font-medium text-luxury-text mb-2">
-            Client Name *
-          </label>
-          <input
-            type="text"
-            {...register("name")}
-            className={`w-full px-4 py-2.5 bg-luxury-dark border rounded-lg text-luxury-text focus:outline-none focus:ring-2 transition-all ${
-              errors.name
-                ? "border-red-500 focus:ring-red-500"
-                : "border-luxury-accent/30 focus:ring-luxury-accent"
-            }`}
-            placeholder="e.g., Sophia Martinez"
-            disabled={isSubmitting}
-          />
-          {errors.name && (
-            <p className="text-red-400 text-xs mt-1.5">{errors.name.message}</p>
-          )}
-        </div>
+        <FormInput
+          type="text"
+          label="Client Name *"
+          placeholder="e.g., Sophia Martinez"
+          disabled={isSubmitting}
+          error={errors.name}
+          {...register("name")}
+        />
 
         {/* Role */}
-        <div>
-          <label className="block text-sm font-medium text-luxury-text mb-2">
-            Role / Title (Optional)
-          </label>
-          <input
-            type="text"
-            {...register("role")}
-            className={`w-full px-4 py-2.5 bg-luxury-dark border rounded-lg text-luxury-text focus:outline-none focus:ring-2 transition-all ${
-              errors.role
-                ? "border-red-500 focus:ring-red-500"
-                : "border-luxury-accent/30 focus:ring-luxury-accent"
-            }`}
-            placeholder="e.g., CEO, Fashion Blogger, or leave blank"
-            disabled={isSubmitting}
-          />
-          {errors.role && (
-            <p className="text-red-400 text-xs mt-1.5">{errors.role.message}</p>
-          )}
-        </div>
+        <FormInput
+          type="text"
+          label="Role / Title (Optional)"
+          placeholder="e.g., CEO, Fashion Blogger, or leave blank"
+          disabled={isSubmitting}
+          error={errors.role}
+          {...register("role")}
+        />
 
         {/* Testimonial Text */}
-        <div>
-          <label className="block text-sm font-medium text-luxury-text mb-2">
-            Testimonial *
-          </label>
-          <textarea
-            {...register("text")}
-            rows={6}
-            className={`w-full px-4 py-2.5 bg-luxury-dark border rounded-lg text-luxury-text focus:outline-none focus:ring-2 transition-all resize-none ${
-              errors.text
-                ? "border-red-500 focus:ring-red-500"
-                : "border-luxury-accent/30 focus:ring-luxury-accent"
-            }`}
-            placeholder="Enter the client's testimonial..."
-            disabled={isSubmitting}
-          />
-          {errors.text && (
-            <p className="text-red-400 text-xs mt-1.5">{errors.text.message}</p>
-          )}
-        </div>
+        <FormTextarea
+          label="Testimonial *"
+          placeholder="Enter the client's testimonial..."
+          rows={6}
+          disabled={isSubmitting}
+          error={errors.text}
+          {...register("text")}
+        />
       </form>
     </BaseModal>
   );
