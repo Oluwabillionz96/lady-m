@@ -23,18 +23,18 @@ export function PaginationControls({
   };
 
   return (
-    <div className="flex items-center justify-center gap-2 mt-8">
+    <nav aria-label="Pagination" className="flex items-center justify-center gap-2 mt-8">
       <button
         onClick={() => handlePageChange(currentPage - 1)}
         disabled={!canGoPrevious || isLoading}
-        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-luxury-light border border-luxury-accent/20 text-luxury-text hover:border-luxury-accent/40 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        aria-label="Previous page"
+        aria-label={`Go to previous page (page ${currentPage - 1})`}
+        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-luxury-light border border-luxury-accent/20 text-luxury-text hover:border-luxury-accent/40 disabled:opacity-50 disabled:cursor-not-allowed transition-colors focus:outline-none focus:ring-2 focus:ring-luxury-accent"
       >
-        <ChevronLeft className="w-4 h-4" />
+        <ChevronLeft className="w-4 h-4" aria-hidden="true" />
         <span className="hidden sm:inline">Previous</span>
       </button>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2" role="status" aria-live="polite" aria-atomic="true">
         <span className="text-sm text-luxury-text-muted">
           Page <span className="font-medium text-luxury-text">{currentPage}</span> of{" "}
           <span className="font-medium text-luxury-text">{totalPages}</span>
@@ -44,12 +44,12 @@ export function PaginationControls({
       <button
         onClick={() => handlePageChange(currentPage + 1)}
         disabled={!canGoNext || isLoading}
-        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-luxury-light border border-luxury-accent/20 text-luxury-text hover:border-luxury-accent/40 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        aria-label="Next page"
+        aria-label={`Go to next page (page ${currentPage + 1})`}
+        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-luxury-light border border-luxury-accent/20 text-luxury-text hover:border-luxury-accent/40 disabled:opacity-50 disabled:cursor-not-allowed transition-colors focus:outline-none focus:ring-2 focus:ring-luxury-accent"
       >
         <span className="hidden sm:inline">Next</span>
-        <ChevronRight className="w-4 h-4" />
+        <ChevronRight className="w-4 h-4" aria-hidden="true" />
       </button>
-    </div>
+    </nav>
   );
 }
