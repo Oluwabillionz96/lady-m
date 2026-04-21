@@ -47,9 +47,15 @@ export function FormInput({
         } ${className || ""}`}
         {...props}
       />
-      {error && <p className="text-red-400 text-xs mt-1.5">{error.message}</p>}
+      {error && (
+        <p id={errorId} className="text-red-400 text-xs mt-1.5">
+          {error.message}
+        </p>
+      )}
       {helperText && !error && (
-        <p className="text-luxury-text-muted text-xs mt-1.5">{helperText}</p>
+        <p id={helperId} className="text-luxury-text-muted text-xs mt-1.5">
+          {helperText}
+        </p>
       )}
     </div>
   );

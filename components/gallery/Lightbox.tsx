@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight, Edit, Trash2 } from "lucide-react";
@@ -33,6 +33,8 @@ export default function Lightbox({
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
   const [direction, setDirection] = useState(0);
+  const lightboxRef = useRef<HTMLDivElement>(null);
+  const previousActiveElement = useRef<HTMLElement | null>(null);
 
   // Preload adjacent images
   useEffect(() => {
@@ -47,9 +49,12 @@ export default function Lightbox({
     }
   }, [currentIndex, isOpen, images]);
 
-  // Keyboard navigation
+  // Keyboard navigation and focus management
   useEffect(() => {
     if (!isOpen) return;
+
+    // Store previous focus
+    previousActiveElement.current = document.activeElement as HTMLElement;
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -64,7 +69,11 @@ export default function Lightbox({
     };
 
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      // Restore focus
+      previousActiveElement.current?.focus();
+    };
   }, [isOpen, onClose, onNext, onPrevious]);
 
   // Prevent body scroll when lightbox is open
@@ -105,6 +114,8 @@ export default function Lightbox({
   if (!isOpen || images.length === 0) return null;
 
   const currentImage = images[currentIndex];
+  const lightboxId = "lightbox-title";
+  const imageCountId = "image-counter";
 
   const slideVariants = {
     enter: (direction: number) => ({
@@ -123,6 +134,11 @@ export default function Lightbox({
 
   return (
     <motion.div
+      ref={lightboxRef}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby={lightboxId}
+      aria-describedby={imageCountId}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -145,7 +161,7 @@ export default function Lightbox({
                 className="p-3 rounded-full bg-blue-500/90 hover:bg-blue-500 text-white transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-lg"
                 aria-label="Edit photo"
               >
-                <Edit className="w-6 h-6" />
+                <Edit className="w-6 h-6" aria-hidden="true" />
               </button>
             )}
             {adminActions.onDelete && (
@@ -158,21 +174,19 @@ export default function Lightbox({
                 className="p-3 rounded-full bg-red-500/90 hover:bg-red-500 text-white transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-red-400 disabled:opacity-50 shadow-lg"
                 aria-label="Delete photo"
               >
-                <Trash2 className="w-6 h-6" />
+                <Trash2 className="w-6 h-6" aria-hidden="true" />
               </button>
             )}
           </div>
         )}
         <button
           onClick={onClose}
-          className=" p-3 rounded-full bg-luxury-light/80 hover:bg-luxury-light transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-luxury-accent"
+          className="p-3 rounded-full bg-luxury-light/80 hover:bg-luxury-light transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-luxury-accent"
           aria-label="Close lightbox"
         >
-          <X className="w-6 h-6 text-luxury-text" />
+          <X className="w-6 h-6 text-luxury-text" aria-hidden="true" />
         </button>
       </div>
-
-      {/* Admin Actions - Top Right */}
 
       {/* Desktop Navigation - Previous */}
       {images.length > 1 && (
@@ -185,7 +199,7 @@ export default function Lightbox({
           className="hidden md:block absolute left-4 z-50 p-3 rounded-full bg-luxury-light/80 hover:bg-luxury-light transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-luxury-accent"
           aria-label="Previous image"
         >
-          <ChevronLeft className="w-8 h-8 text-luxury-text" />
+          <ChevronLeft className="w-8 h-8 text-luxury-text" aria-hidden="true" />
         </button>
       )}
 
@@ -200,7 +214,7 @@ export default function Lightbox({
           className="hidden md:block absolute right-4 z-50 p-3 rounded-full bg-luxury-light/80 hover:bg-luxury-light transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-luxury-accent"
           aria-label="Next image"
         >
-          <ChevronRight className="w-8 h-8 text-luxury-text" />
+          <ChevronRight className="w-8 h-8 text-luxury-text" aria-hidden="true" />
         </button>
       )}
 
@@ -238,9 +252,9 @@ export default function Lightbox({
               <div className="flex items-center justify-between">
                 <div className="flex-1 min-w-0">
                   {currentImage.title && (
-                    <h3 className="text-luxury-text font-semibold text-xl md:text-2xl mb-2">
+                    <h2 id={lightboxId} className="text-luxury-text font-semibold text-xl md:text-2xl mb-2">
                       {currentImage.title}
-                    </h3>
+                    </h2>
                   )}
                   <div className="flex items-center gap-4">
                     {currentImage.category && (
@@ -248,8 +262,8 @@ export default function Lightbox({
                         {currentImage.category}
                       </p>
                     )}
-                    <p className="text-luxury-text-muted text-sm">
-                      {currentIndex + 1} / {images.length}
+                    <p id={imageCountId} className="text-luxury-text-muted text-sm" aria-live="polite" aria-atomic="true">
+                      Image {currentIndex + 1} of {images.length}
                     </p>
                   </div>
                 </div>
@@ -260,7 +274,7 @@ export default function Lightbox({
       </div>
 
       {/* Mobile Swipe Hint */}
-      <div className="md:hidden absolute bottom-4 left-1/2 transform -translate-x-1/2 text-luxury-text-muted text-sm">
+      <div className="md:hidden absolute bottom-4 left-1/2 transform -translate-x-1/2 text-luxury-text-muted text-sm" aria-hidden="true">
         Swipe to navigate
       </div>
     </motion.div>
