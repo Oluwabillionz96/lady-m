@@ -60,6 +60,7 @@ export default function EditModal({
     >
       {type === "textarea" ? (
         <FormTextarea
+          id={`setting-${settingKey}`}
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           rows={8}
@@ -68,6 +69,7 @@ export default function EditModal({
         />
       ) : (
         <FormInput
+          id={`setting-${settingKey}`}
           type={type}
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}

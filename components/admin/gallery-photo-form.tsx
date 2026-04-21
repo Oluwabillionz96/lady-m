@@ -87,6 +87,7 @@ export function GalleryPhotoForm({
           {/* Form Fields */}
           <div className="flex-1 space-y-4">
             <FormInput
+              id="photo-title"
               type="text"
               label="Title *"
               placeholder="Enter photo title"
@@ -96,6 +97,7 @@ export function GalleryPhotoForm({
             />
 
             <FormSelect
+              id="photo-category"
               label="Category *"
               options={[{ value: "", label: "Select a category" }, ...categoryOptions]}
               disabled={isSubmitting}

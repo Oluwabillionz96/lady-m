@@ -158,6 +158,7 @@ export function TestimonialForm() {
 
           {/* Name */}
           <FormInput
+            id="testimonial-name"
             type="text"
             label="Client Name *"
             placeholder="e.g., Sophia Martinez"
@@ -168,6 +169,7 @@ export function TestimonialForm() {
 
           {/* Role */}
           <FormInput
+            id="testimonial-role"
             type="text"
             label="Role / Title (Optional)"
             placeholder="e.g., CEO, Fashion Blogger, or leave blank"
@@ -178,6 +180,7 @@ export function TestimonialForm() {
 
           {/* Testimonial Text */}
           <FormTextarea
+            id="testimonial-text"
             label="Testimonial *"
             placeholder="Enter the client's testimonial..."
             rows={6}

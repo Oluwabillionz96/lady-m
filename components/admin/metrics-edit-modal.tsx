@@ -59,6 +59,7 @@ export default function MetricsEditModal({
       }
     >
       <FormInput
+        id="metric-value"
         type="text"
         value={value}
         onChange={(e) => setValue(e.target.value)}
