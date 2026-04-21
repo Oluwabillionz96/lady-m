@@ -31,24 +31,34 @@ function AdminLayoutContent({ children }: { children: ReactNode }) {
 
   return (
     <div className="flex min-h-screen bg-luxury-dark">
+      {/* Skip to main content link */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:bg-luxury-accent focus:text-luxury-dark focus:px-4 focus:py-2 focus:rounded-lg focus:font-semibold"
+      >
+        Skip to main content
+      </a>
+
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
           onClick={() => setSidebarOpen(false)}
+          aria-hidden="true"
         />
       )}
 
-      {/* Sidebar */}
-      <div
+      {/* Sidebar Navigation */}
+      <nav
         className={`
         lg:static fixed inset-y-0 left-0 z-50 w-64 bg-luxury-light border-r border-[#333333] 
         flex flex-col transform transition-transform duration-300 ease-in-out
         ${sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
       `}
+        aria-label="Admin navigation"
       >
         <AdminNavigation onNavigate={closeSidebar} />
-      </div>
+      </nav>
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-h-screen">
@@ -57,19 +67,22 @@ function AdminLayoutContent({ children }: { children: ReactNode }) {
           {/* Mobile menu button */}
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="lg:hidden text-white hover:text-luxury-accent transition-colors"
+            aria-label={sidebarOpen ? "Close navigation menu" : "Open navigation menu"}
+            aria-expanded={sidebarOpen}
+            aria-controls="admin-sidebar"
+            className="lg:hidden text-white hover:text-luxury-accent transition-colors focus:outline-none focus:ring-2 focus:ring-luxury-accent rounded"
           >
-            {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
+            {sidebarOpen ? <X size={24} aria-hidden="true" /> : <Menu size={24} aria-hidden="true" />}
           </button>
 
-          <h2 className="text-xl font-semibold text-white">Admin Dashboard</h2>
+          <h1 className="text-xl font-semibold text-white">Admin Dashboard</h1>
 
           {/* Spacer for mobile */}
           <div className="lg:hidden w-6" />
         </header>
 
         {/* Content Area */}
-        <main className="flex-1 bg-luxury-dark p-4 lg:p-6">
+        <main id="main-content" className="flex-1 bg-luxury-dark p-4 lg:p-6">
           <div className="max-w-7xl mx-auto">{children}</div>
         </main>
       </div>

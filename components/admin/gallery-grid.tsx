@@ -93,64 +93,63 @@ export function GalleryGrid({ photos }: GalleryGridProps) {
 
   return (
     <>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" role="region" aria-label="Gallery photos">
         {photos.map((photo, index) => (
-          <div
+          <article
             key={photo.id}
             className="bg-luxury-light rounded-lg overflow-hidden border border-luxury-accent/20 hover:border-luxury-accent/40 transition-all group"
           >
             {/* Image */}
-            <div
-              className="aspect-square relative overflow-hidden cursor-pointer"
-              onClick={() => setLightboxIndex(index)}
-            >
-              <Image
-                src={photo.image_url}
-                alt={photo.title}
-                fill
-                className="object-cover group-hover:scale-105 transition-transform duration-300"
-              />
-            </div>
+            <figure className="aspect-square relative overflow-hidden">
+              <button
+                onClick={() => setLightboxIndex(index)}
+                className="w-full h-full cursor-pointer focus:outline-none focus:ring-2 focus:ring-luxury-accent"
+                aria-label={`View ${photo.title}`}
+              >
+                <Image
+                  src={photo.image_url}
+                  alt={photo.title}
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+              </button>
+            </figure>
 
             {/* Info */}
             <div className="p-4">
-              <h3
-                className="font-medium text-luxury-text truncate cursor-pointer hover:text-luxury-accent transition-colors"
-                title={photo.title}
-                onClick={() => setLightboxIndex(index)}
-              >
+              <h3 className="font-medium text-luxury-text truncate">
                 {photo.title}
               </h3>
               <div className="flex items-center justify-between mt-2 mb-3">
                 <span className="text-sm text-luxury-text-muted capitalize">
                   {photo.category}
                 </span>
-                <span className="text-xs text-luxury-text-muted">
+                <time className="text-xs text-luxury-text-muted" dateTime={photo.created_at}>
                   {new Date(photo.created_at).toLocaleDateString()}
-                </span>
+                </time>
               </div>
 
               {/* Action Buttons */}
               <div className="flex gap-2">
                 <button
                   onClick={() => handleEdit(photo)}
-                  className="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 sm:py-2 bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 rounded-lg transition-colors text-sm sm:text-xs font-medium"
-                  title="Edit photo"
+                  aria-label={`Edit ${photo.title}`}
+                  className="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 sm:py-2 bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 rounded-lg transition-colors text-sm sm:text-xs font-medium focus:outline-none focus:ring-2 focus:ring-blue-400"
                 >
-                  <Edit className="w-5 h-5 sm:w-4 sm:h-4" />
+                  <Edit className="w-5 h-5 sm:w-4 sm:h-4" aria-hidden="true" />
                   <span className="hidden sm:inline">Edit</span>
                 </button>
                 <button
                   onClick={() => handleDeleteClick(photo)}
-                  className="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 sm:py-2 bg-red-500/10 text-red-400 hover:bg-red-500/20 rounded-lg transition-colors text-sm sm:text-xs font-medium"
-                  title="Delete photo"
+                  aria-label={`Delete ${photo.title}`}
+                  className="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 sm:py-2 bg-red-500/10 text-red-400 hover:bg-red-500/20 rounded-lg transition-colors text-sm sm:text-xs font-medium focus:outline-none focus:ring-2 focus:ring-red-400"
                 >
-                  <Trash2 className="w-5 h-5 sm:w-4 sm:h-4" />
+                  <Trash2 className="w-5 h-5 sm:w-4 sm:h-4" aria-hidden="true" />
                   <span className="hidden sm:inline">Delete</span>
                 </button>
               </div>
             </div>
-          </div>
+          </article>
         ))}
       </div>
 

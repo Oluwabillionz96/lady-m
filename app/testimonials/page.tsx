@@ -61,50 +61,52 @@ export default async function TestimonialsPage({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {testimonials.length > 0 ? (
             <>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8" role="region" aria-label="Client testimonials">
                 {testimonials.map((testimonial) => (
-                  <Card key={testimonial.id} variant="elevated">
-                    {/* Quote Icon */}
-                    <div className="mb-4">
-                      <BiSolidQuoteLeft className="w-10 h-10 text-luxury-accent opacity-50" />
-                    </div>
-
-                    {/* Testimonial Text */}
-                    <p className="text-luxury-text text-base leading-relaxed mb-6">
-                      &quot;{testimonial.text}&quot;
-                    </p>
-
-                    {/* Client Info */}
-                    <div className="flex items-center gap-4 pt-4 border-t border-luxury-accent/20">
-                      {testimonial.photo_url ? (
-                        <div className="relative w-12 h-12 rounded-full overflow-hidden bg-luxury-light shrink-0">
-                          <Image
-                            src={testimonial.photo_url}
-                            alt={testimonial.name}
-                            fill
-                            className="object-cover"
-                            sizes="48px"
-                          />
-                        </div>
-                      ) : (
-                        <div className="w-12 h-12 rounded-full bg-luxury-accent/20 flex items-center justify-center shrink-0">
-                          <span className="text-luxury-accent font-semibold text-lg">
-                            {testimonial.name.charAt(0)}
-                          </span>
-                        </div>
-                      )}
-                      <div>
-                        <p className="text-luxury-text font-semibold">
-                          {testimonial.name}
-                        </p>
-                        {testimonial.role && (
-                          <p className="text-luxury-text-muted text-sm">
-                            {testimonial.role}
-                          </p>
-                        )}
+                  <article key={testimonial.id} className="h-full">
+                    <Card variant="elevated">
+                      {/* Quote Icon */}
+                      <div className="mb-4">
+                        <BiSolidQuoteLeft className="w-10 h-10 text-luxury-accent opacity-50" aria-hidden="true" />
                       </div>
-                    </div>
-                  </Card>
+
+                      {/* Testimonial Text */}
+                      <blockquote className="text-luxury-text text-base leading-relaxed mb-6">
+                        &quot;{testimonial.text}&quot;
+                      </blockquote>
+
+                      {/* Client Info */}
+                      <div className="flex items-center gap-4 pt-4 border-t border-luxury-accent/20">
+                        {testimonial.photo_url ? (
+                          <div className="relative w-12 h-12 rounded-full overflow-hidden bg-luxury-light shrink-0">
+                            <Image
+                              src={testimonial.photo_url}
+                              alt={testimonial.name}
+                              fill
+                              className="object-cover"
+                              sizes="48px"
+                            />
+                          </div>
+                        ) : (
+                          <div className="w-12 h-12 rounded-full bg-luxury-accent/20 flex items-center justify-center shrink-0">
+                            <span className="text-luxury-accent font-semibold text-lg">
+                              {testimonial.name.charAt(0)}
+                            </span>
+                          </div>
+                        )}
+                        <div>
+                          <p className="text-luxury-text font-semibold">
+                            {testimonial.name}
+                          </p>
+                          {testimonial.role && (
+                            <p className="text-luxury-text-muted text-sm">
+                              {testimonial.role}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </Card>
+                  </article>
                 ))}
               </div>
               {totalPages > 1 && (

@@ -88,7 +88,9 @@ export default function GalleryPage() {
         {/* Gallery Grid */}
         {!loading && galleryItems.length > 0 && (
           <>
-            <GalleryGrid items={galleryItems} onImageClick={handleImageClick} />
+            <section aria-label="Gallery photos" className="mb-8">
+              <GalleryGrid items={galleryItems} onImageClick={handleImageClick} />
+            </section>
             {totalPages > 1 && (
               <PaginationControls currentPage={page} totalPages={totalPages} />
             )}
