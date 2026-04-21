@@ -28,7 +28,7 @@ export default async function Home() {
   }));
 
   // Transform gallery photos
-  const galleryPhotos = galleryResult.success ? galleryResult.data : [];
+  const galleryPhotos = galleryResult.success ? galleryResult.data.data : [];
   const galleryItems: GalleryItem[] = galleryPhotos.map((photo) => ({
     id: photo.id,
     imageUrl: photo.image_url,
@@ -39,7 +39,7 @@ export default async function Home() {
 
   // Transform testimonials
   const dbTestimonials = testimonialsResult.success
-    ? testimonialsResult.data
+    ? testimonialsResult.data.data
     : [];
   const transformedTestimonials = dbTestimonials
     .slice(0, 3)
@@ -50,7 +50,9 @@ export default async function Home() {
       text: testimonial.text,
       role: testimonial.role,
     }));
-  const totalTestimonials = dbTestimonials.length;
+  const totalTestimonials = testimonialsResult.success
+    ? testimonialsResult.data.total
+    : 0;
 
   // Get settings with fallbacks
   const settings = settingsResult.success
