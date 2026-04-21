@@ -1,26 +1,34 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import GalleryGrid from "@/components/gallery/GalleryGrid";
 import Lightbox from "@/components/gallery/Lightbox";
 import GallerySkeleton from "@/components/ui/gallery-skeleton";
+import { PaginationControls } from "@/components/admin/pagination-controls";
 import { getPublicGalleryPhotos } from "@/lib/actions/gallery";
 import { GalleryItem } from "@/types";
 
 export default function GalleryPage() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10));
+  const pageSize = 12;
+
   const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [total, setTotal] = useState(0);
 
-  // Fetch gallery photos on component mount
+  // Fetch gallery photos on component mount or page change
   useEffect(() => {
     async function fetchGalleryPhotos() {
       try {
-        const result = await getPublicGalleryPhotos();
+        const result = await getPublicGalleryPhotos(page, pageSize);
         if (result.success) {
           // Convert database photos to GalleryItem format
-          const items: GalleryItem[] = result.data.map((photo) => ({
+          const items: GalleryItem[] = result.data.data.map((photo) => ({
             id: photo.id,
             imageUrl: photo.image_url,
             alt: photo.title,
@@ -28,6 +36,7 @@ export default function GalleryPage() {
             category: photo.category,
           }));
           setGalleryItems(items);
+          setTotal(result.data.total);
         }
       } catch (error) {
         console.error("Error fetching gallery photos:", error);
@@ -37,7 +46,7 @@ export default function GalleryPage() {
     }
 
     fetchGalleryPhotos();
-  }, []);
+  }, [page, pageSize]);
 
   const handleImageClick = (index: number) => {
     setCurrentImageIndex(index);
@@ -58,6 +67,8 @@ export default function GalleryPage() {
     );
   };
 
+  const totalPages = Math.ceil(total / pageSize);
+
   return (
     <main className="min-h-screen bg-luxury-dark">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
@@ -76,7 +87,12 @@ export default function GalleryPage() {
 
         {/* Gallery Grid */}
         {!loading && galleryItems.length > 0 && (
-          <GalleryGrid items={galleryItems} onImageClick={handleImageClick} />
+          <>
+            <GalleryGrid items={galleryItems} onImageClick={handleImageClick} />
+            {totalPages > 1 && (
+              <PaginationControls currentPage={page} totalPages={totalPages} />
+            )}
+          </>
         )}
 
         {/* Empty State */}

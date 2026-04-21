@@ -1,15 +1,33 @@
 import Image from "next/image";
 import Card from "@/components/ui/Card";
 import { getPublicTestimonials } from "@/lib/actions/testimonials";
+import { PaginationControls } from "@/components/admin/pagination-controls";
 import { BiSolidQuoteLeft } from "react-icons/bi";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
-export default async function TestimonialsPage() {
-  const testimonialsResult = await getPublicTestimonials();
-  const testimonials = testimonialsResult.success
+interface TestimonialsPageProps {
+  searchParams: Promise<{ page?: string }>;
+}
+
+export default async function TestimonialsPage({
+  searchParams,
+}: TestimonialsPageProps) {
+  const params = await searchParams;
+  const page = Math.max(1, parseInt(params.page || "1", 10));
+  const pageSize = 12;
+
+  const testimonialsResult = await getPublicTestimonials(page, pageSize);
+  const {
+    data: testimonials,
+    total,
+    page: currentPage,
+    pageSize: currentPageSize,
+  } = testimonialsResult.success
     ? testimonialsResult.data
-    : [];
+    : { data: [], total: 0, page: 1, pageSize: 12 };
+
+  const totalPages = Math.ceil(total / currentPageSize);
 
   return (
     <main className="min-h-screen bg-luxury-dark">
@@ -42,52 +60,60 @@ export default async function TestimonialsPage() {
       <section className="py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {testimonials.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-              {testimonials.map((testimonial) => (
-                <Card key={testimonial.id} variant="elevated">
-                  {/* Quote Icon */}
-                  <div className="mb-4">
-                    <BiSolidQuoteLeft className="w-10 h-10 text-luxury-accent opacity-50" />
-                  </div>
-
-                  {/* Testimonial Text */}
-                  <p className="text-luxury-text text-base leading-relaxed mb-6">
-                    &quot;{testimonial.text}&quot;
-                  </p>
-
-                  {/* Client Info */}
-                  <div className="flex items-center gap-4 pt-4 border-t border-luxury-accent/20">
-                    {testimonial.photo_url ? (
-                      <div className="relative w-12 h-12 rounded-full overflow-hidden bg-luxury-light shrink-0">
-                        <Image
-                          src={testimonial.photo_url}
-                          alt={testimonial.name}
-                          fill
-                          className="object-cover"
-                          sizes="48px"
-                        />
-                      </div>
-                    ) : (
-                      <div className="w-12 h-12 rounded-full bg-luxury-accent/20 flex items-center justify-center shrink-0">
-                        <span className="text-luxury-accent font-semibold text-lg">
-                          {testimonial.name.charAt(0)}
-                        </span>
-                      </div>
-                    )}
-                    <div>
-                      <p className="text-luxury-text font-semibold">
-                        {testimonial.name}
-                      </p>
-                      {testimonial.role && (
-                        <p className="text-luxury-text-muted text-sm">
-                          {testimonial.role}
-                        </p>
-                      )}
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                {testimonials.map((testimonial) => (
+                  <Card key={testimonial.id} variant="elevated">
+                    {/* Quote Icon */}
+                    <div className="mb-4">
+                      <BiSolidQuoteLeft className="w-10 h-10 text-luxury-accent opacity-50" />
                     </div>
-                  </div>
-                </Card>
-              ))}
-            </div>
+
+                    {/* Testimonial Text */}
+                    <p className="text-luxury-text text-base leading-relaxed mb-6">
+                      &quot;{testimonial.text}&quot;
+                    </p>
+
+                    {/* Client Info */}
+                    <div className="flex items-center gap-4 pt-4 border-t border-luxury-accent/20">
+                      {testimonial.photo_url ? (
+                        <div className="relative w-12 h-12 rounded-full overflow-hidden bg-luxury-light shrink-0">
+                          <Image
+                            src={testimonial.photo_url}
+                            alt={testimonial.name}
+                            fill
+                            className="object-cover"
+                            sizes="48px"
+                          />
+                        </div>
+                      ) : (
+                        <div className="w-12 h-12 rounded-full bg-luxury-accent/20 flex items-center justify-center shrink-0">
+                          <span className="text-luxury-accent font-semibold text-lg">
+                            {testimonial.name.charAt(0)}
+                          </span>
+                        </div>
+                      )}
+                      <div>
+                        <p className="text-luxury-text font-semibold">
+                          {testimonial.name}
+                        </p>
+                        {testimonial.role && (
+                          <p className="text-luxury-text-muted text-sm">
+                            {testimonial.role}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+              {totalPages > 1 && (
+                <PaginationControls
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                />
+              )}
+            </>
           ) : (
             <div className="text-center py-12">
               <p className="text-luxury-text-muted text-lg">

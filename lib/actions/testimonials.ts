@@ -21,12 +21,18 @@ export interface CreateTestimonialData {
   photo_url?: string;
 }
 
-export async function getTestimonials(): Promise<Result<Testimonial[]>> {
-  const { getTableRecords } = await import("./utils");
-  // TODO: Implement pagination with page/pageSize parameters
-  // Use .range(from, to) for offset-based pagination
-  // Add count: 'exact' to get total count for pagination UI
-  return getTableRecords<Testimonial>("testimonials");
+export async function getTestimonials(
+  page: number = 1,
+  pageSize: number = 12,
+): Promise<Result<{ data: Testimonial[]; total: number; page: number; pageSize: number }>> {
+  const { getTableRecordsPaginated } = await import("./utils");
+  return getTableRecordsPaginated<Testimonial>(
+    "testimonials",
+    page,
+    pageSize,
+    "created_at",
+    false,
+  );
 }
 
 export async function createTestimonial(
@@ -145,9 +151,18 @@ export async function deleteTestimonial(id: string): Promise<Result<boolean>> {
 }
 
 // Get testimonials for public display (no authentication required)
-export async function getPublicTestimonials(): Promise<Result<Testimonial[]>> {
-  const { getTableRecords } = await import("./utils");
-  return getTableRecords<Testimonial>("testimonials");
+export async function getPublicTestimonials(
+  page: number = 1,
+  pageSize: number = 12,
+): Promise<Result<{ data: Testimonial[]; total: number; page: number; pageSize: number }>> {
+  const { getTableRecordsPaginated } = await import("./utils");
+  return getTableRecordsPaginated<Testimonial>(
+    "testimonials",
+    page,
+    pageSize,
+    "created_at",
+    false,
+  );
 }
 
 // Get total testimonials count

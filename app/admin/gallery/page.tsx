@@ -1,13 +1,22 @@
 import { getGalleryPhotos } from "@/lib/actions/gallery";
 import { GalleryGrid } from "@/components/admin/gallery-grid";
 import { UploadWidget } from "@/components/admin/upload-widget";
+import { PaginationControls } from "@/components/admin/pagination-controls";
 import { Plus } from "lucide-react";
 import PageHeader from "@/components/admin/page-header";
 
 export const dynamic = "force-dynamic";
 
-export default async function GalleryPage() {
-  const result = await getGalleryPhotos();
+interface GalleryPageProps {
+  searchParams: Promise<{ page?: string }>;
+}
+
+export default async function GalleryPage({ searchParams }: GalleryPageProps) {
+  const params = await searchParams;
+  const page = Math.max(1, parseInt(params.page || "1", 10));
+  const pageSize = 12;
+
+  const result = await getGalleryPhotos(page, pageSize);
 
   if (!result.success) {
     return (
@@ -23,18 +32,29 @@ export default async function GalleryPage() {
     );
   }
 
+  const { data: photos, total, page: currentPage, pageSize: currentPageSize } = result.data;
+  const totalPages = Math.ceil(total / currentPageSize);
+
   return (
     <div className="space-y-6">
       <PageHeader
         headingText="Gallery Management"
-        subText=" Manage your portfolio photos"
+        subText={`Manage your portfolio photos (${total} total)`}
       >
         <UploadWidget />
       </PageHeader>
 
       {/* Gallery Grid */}
-      {result.data.length > 0 ? (
-        <GalleryGrid photos={result.data} />
+      {photos.length > 0 ? (
+        <>
+          <GalleryGrid photos={photos} />
+          {totalPages > 1 && (
+            <PaginationControls
+              currentPage={currentPage}
+              totalPages={totalPages}
+            />
+          )}
+        </>
       ) : (
         <div className="text-center py-12">
           <div className="bg-luxury-light rounded-lg p-8 border border-luxury-accent/20">

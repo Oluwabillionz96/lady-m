@@ -5,12 +5,25 @@ import { createServerClient } from "../supabase";
 import { revalidatePath } from "next/cache";
 import { deleteImage } from "../cloudinary/upload";
 
-export async function getGalleryPhotos(): Promise<Result<GalleryPhoto[]>> {
-  const { getTableRecords } = await import("./utils");
-  // TODO: Implement pagination with page/pageSize parameters
-  // Use .range(from, to) for offset-based pagination
-  // Add count: 'exact' to get total count for pagination UI
-  return getTableRecords<GalleryPhoto>("gallery_photos");
+export async function getGalleryPhotos(
+  page: number = 1,
+  pageSize: number = 12,
+): Promise<
+  Result<{
+    data: GalleryPhoto[];
+    total: number;
+    page: number;
+    pageSize: number;
+  }>
+> {
+  const { getTableRecordsPaginated } = await import("./utils");
+  return getTableRecordsPaginated<GalleryPhoto>(
+    "gallery_photos",
+    page,
+    pageSize,
+    "created_at",
+    false,
+  );
 }
 
 export async function createGalleryPhoto(
@@ -164,27 +177,25 @@ function extractPublicIdFromUrl(url: string): string | null {
 }
 
 // Public gallery photos (no authentication required)
-export async function getPublicGalleryPhotos(): Promise<
-  Result<GalleryPhoto[]>
+export async function getPublicGalleryPhotos(
+  page: number = 1,
+  pageSize: number = 12,
+): Promise<
+  Result<{
+    data: GalleryPhoto[];
+    total: number;
+    page: number;
+    pageSize: number;
+  }>
 > {
-  try {
-    const supabase = await createServerClient();
-
-    const { data, error } = await supabase
-      .from("gallery_photos")
-      .select("*")
-      .order("created_at", { ascending: false });
-
-    if (error) {
-      console.error("Error fetching public gallery photos:", error);
-      return { success: false, error: "Failed to fetch gallery photos" };
-    }
-
-    return { success: true, data: data || [] };
-  } catch (error) {
-    console.error("Unexpected error fetching public gallery photos:", error);
-    return { success: false, error: "An unexpected error occurred" };
-  }
+  const { getTableRecordsPaginated } = await import("./utils");
+  return getTableRecordsPaginated<GalleryPhoto>(
+    "gallery_photos",
+    page,
+    pageSize,
+    "created_at",
+    false,
+  );
 }
 
 // Batch upload photos (handles Cloudinary upload + Supabase insert)

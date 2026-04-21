@@ -1,13 +1,24 @@
 import { getTestimonials } from "@/lib/actions/testimonials";
 import { TestimonialsGrid } from "@/components/admin/testimonials-grid";
 import { TestimonialForm } from "@/components/admin/testimonial-form";
+import { PaginationControls } from "@/components/admin/pagination-controls";
 import { Plus } from "lucide-react";
 import PageHeader from "@/components/admin/page-header";
 
 export const dynamic = "force-dynamic";
 
-export default async function TestimonialsPage() {
-  const result = await getTestimonials();
+interface TestimonialsPageProps {
+  searchParams: Promise<{ page?: string }>;
+}
+
+export default async function TestimonialsPage({
+  searchParams,
+}: TestimonialsPageProps) {
+  const params = await searchParams;
+  const page = Math.max(1, parseInt(params.page || "1", 10));
+  const pageSize = 12;
+
+  const result = await getTestimonials(page, pageSize);
 
   if (!result.success) {
     return (
@@ -24,18 +35,34 @@ export default async function TestimonialsPage() {
     );
   }
 
+  const {
+    data: testimonials,
+    total,
+    page: currentPage,
+    pageSize: currentPageSize,
+  } = result.data;
+  const totalPages = Math.ceil(total / currentPageSize);
+
   return (
     <div className="space-y-6">
       <PageHeader
         headingText="Testimonials Management"
-        subText="Manage client testimonials"
+        subText={`Manage client testimonials (${total} total)`}
       >
         <TestimonialForm />
       </PageHeader>
 
       {/* Testimonials Grid */}
-      {result.data.length > 0 ? (
-        <TestimonialsGrid testimonials={result.data} />
+      {testimonials.length > 0 ? (
+        <>
+          <TestimonialsGrid testimonials={testimonials} />
+          {totalPages > 1 && (
+            <PaginationControls
+              currentPage={currentPage}
+              totalPages={totalPages}
+            />
+          )}
+        </>
       ) : (
         <div className="text-center py-12">
           <div className="bg-luxury-light rounded-lg p-8 border border-luxury-accent/20">

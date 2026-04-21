@@ -37,33 +37,55 @@ export async function getTableCount(
 }
 
 /**
- * Generic function to get all records from a table
+ * Generic function to get paginated records from a table
  * @param tableName - Name of the table to fetch from
+ * @param page - Page number (1-indexed)
+ * @param pageSize - Number of records per page
  * @param orderBy - Column to order by (default: "created_at")
  * @param ascending - Sort order (default: false for descending)
- * @returns Result with array of records
+ * @returns Result with paginated records and total count
  */
-export async function getTableRecords<T>(
+export async function getTableRecordsPaginated<T>(
   tableName: tableNames,
+  page: number = 1,
+  pageSize: number = 12,
   orderBy: string = "created_at",
   ascending: boolean = false,
-): Promise<Result<T[]>> {
+): Promise<
+  Result<{ data: T[]; total: number; page: number; pageSize: number }>
+> {
   try {
     const supabase = await createServerClient();
 
-    const { data, error } = await supabase
+    // Validate page and pageSize
+    const validPage = Math.max(1, page);
+    const validPageSize = Math.max(1, Math.min(pageSize, 100)); // Cap at 100
+
+    const from = (validPage - 1) * validPageSize;
+    const to = from + validPageSize - 1;
+
+    const { data, error, count } = await supabase
       .from(tableName)
-      .select("*")
-      .order(orderBy, { ascending });
+      .select("*", { count: "exact" })
+      .order(orderBy, { ascending })
+      .range(from, to);
 
     if (error) {
-      console.error(`Error fetching ${tableName}:`, error);
+      console.error(`Error fetching paginated ${tableName}:`, error);
       return { success: false, error: `Failed to fetch ${tableName}` };
     }
 
-    return { success: true, data: (data as T[]) || [] };
+    return {
+      success: true,
+      data: {
+        data: (data as T[]) || [],
+        total: count || 0,
+        page: validPage,
+        pageSize: validPageSize,
+      },
+    };
   } catch (error) {
-    console.error(`Unexpected error fetching ${tableName}:`, error);
+    console.error(`Unexpected error fetching paginated ${tableName}:`, error);
     return { success: false, error: "An unexpected error occurred" };
   }
 }
