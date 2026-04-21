@@ -17,6 +17,7 @@ export default function Button({
   disabled,
   children,
   className,
+  type="button",
   ...props
 }: ButtonProps) {
   const baseClasses =
@@ -42,6 +43,7 @@ export default function Button({
       disabled={disabled || loading}
       className={`${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${className || ""}`}
       {...props}
+      type={type}
     >
       {loading && <Loader2 className="w-4 h-4 animate-spin" />}
       {children}
