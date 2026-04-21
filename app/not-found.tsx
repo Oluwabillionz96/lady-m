@@ -1,5 +1,5 @@
 import Link from "next/link";
-import WhatsAppButton from "@/components/ui/WhatsAppButton";
+import WhatsAppButton from "@/components/ui/whats-app-button";
 
 export default function NotFound() {
   return (

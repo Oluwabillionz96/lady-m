@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import WhatsAppButton from "@/components/ui/WhatsAppButton";
+import WhatsAppButton from "@/components/ui/whats-app-button";
 import { GalleryItem } from "@/types";
 
 interface FeaturedWorksProps {
@@ -20,7 +20,7 @@ export default function FeaturedWorks({
         {/* Section Header */}
         <div className="text-center mb-12 md:mb-16">
           <h2 className="font-family-heading text-4xl md:text-5xl lg:text-6xl font-bold text-luxury-accent mb-4">
-            Featured Works
+            Recent Works
           </h2>
           <p className="text-luxury-text-muted text-lg md:text-xl max-w-2xl mx-auto">
             A glimpse into our portfolio of custom-tailored masterpieces
@@ -38,7 +38,7 @@ export default function FeaturedWorks({
               {/* Image */}
               <Image
                 src={item.imageUrl}
-                alt={item.alt}
+                alt={item.title}
                 fill
                 className="object-cover transition-transform duration-500 group-hover:scale-110"
                 sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
@@ -53,7 +53,9 @@ export default function FeaturedWorks({
                     </h3>
                   )}
                   {item.category && (
-                    <p className="text-luxury-accent text-sm">{item.category}</p>
+                    <p className="text-luxury-accent text-sm">
+                      {item.category}
+                    </p>
                   )}
                 </div>
               </div>

@@ -1,15 +1,21 @@
 import Image from "next/image";
+import Link from "next/link";
 import Card from "@/components/ui/Card";
 import { Testimonial } from "@/types";
 import { BiSolidQuoteLeft } from "react-icons/bi";
+import { ArrowRight } from "lucide-react";
 
 interface TestimonialsSectionProps {
   testimonials: Testimonial[];
+  totalCount?: number;
 }
 
 export default function TestimonialsSection({
   testimonials,
+  totalCount = 0,
 }: TestimonialsSectionProps) {
+  const showViewAll = totalCount > 3;
+
   return (
     <section className="py-16 md:py-24 bg-luxury-darker">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -26,7 +32,7 @@ export default function TestimonialsSection({
         {/* Testimonials Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
           {testimonials.map((testimonial) => (
-            <Card key={testimonial.id} variant="elevated">
+            <Card key={testimonial.id} variant="elevated" className="flex flex-col justify-between">
               {/* Quote Icon */}
               <div className="mb-4">
                 <BiSolidQuoteLeft className="w-10 h-10 text-luxury-accent opacity-50" />
@@ -39,15 +45,23 @@ export default function TestimonialsSection({
 
               {/* Client Info */}
               <div className="flex items-center gap-4 pt-4 border-t border-luxury-accent/20">
-                <div className="relative w-12 h-12 rounded-full overflow-hidden bg-luxury-light shrink-0">
-                  <Image
-                    src={testimonial.photoUrl}
-                    alt={testimonial.name}
-                    fill
-                    className="object-cover"
-                    sizes="48px"
-                  />
-                </div>
+                {testimonial.photoUrl ? (
+                  <div className="relative w-12 h-12 rounded-full overflow-hidden bg-luxury-light shrink-0">
+                    <Image
+                      src={testimonial.photoUrl}
+                      alt={testimonial.name}
+                      fill
+                      className="object-cover"
+                      sizes="48px"
+                    />
+                  </div>
+                ) : (
+                  <div className="w-12 h-12 rounded-full bg-luxury-accent/20 flex items-center justify-center shrink-0">
+                    <span className="text-luxury-accent font-semibold text-lg">
+                      {testimonial.name.charAt(0)}
+                    </span>
+                  </div>
+                )}
                 <div>
                   <p className="text-luxury-text font-semibold">
                     {testimonial.name}
@@ -62,6 +76,19 @@ export default function TestimonialsSection({
             </Card>
           ))}
         </div>
+
+        {/* View All Button */}
+        {showViewAll && (
+          <div className="text-center mt-12">
+            <Link
+              href="/testimonials"
+              className="inline-flex items-center gap-2 bg-luxury-accent text-luxury-dark px-6 py-3 rounded-lg hover:bg-luxury-accent-light transition-colors font-medium"
+            >
+              View All Testimonials
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        )}
       </div>
     </section>
   );

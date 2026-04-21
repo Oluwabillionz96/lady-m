@@ -40,8 +40,8 @@ body {
   color: var(--color-luxury-text);
 }
 
-@layer utilities{
-  button{
+@layer utilities {
+  button {
     @apply cursor-pointer;
   }
 }
@@ -62,7 +62,18 @@ body {
   animation: fade-in 0.8s var(--animate-ease) forwards;
 }
 
+/* Shimmer animation for skeleton loaders */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
 /* Smooth transitions for all interactive elements */
-a, button {
+a,
+button {
   transition: all var(--animate-duration-normal) var(--animate-ease);
 }

@@ -1,4 +1,7 @@
+"use client";
 import Card from "@/components/ui/Card";
+import { formatMetricValue } from "@/lib/utils";
+
 import { Metric } from "@/types";
 
 interface MetricsSectionProps {
@@ -16,7 +19,7 @@ export default function MetricsSection({ metrics }: MetricsSectionProps) {
               <div className="text-center">
                 {/* Metric Value */}
                 <div className="text-4xl md:text-5xl lg:text-6xl font-bold text-luxury-accent mb-2 font-family-heading">
-                  {metric.value}
+                  {formatMetricValue(metric)}
                 </div>
 
                 {/* Metric Label */}

@@ -5,7 +5,7 @@
 export function validatePhoneNumber(phone: string): boolean {
   // Remove all non-digit characters except +
   const cleaned = phone.replace(/[^\d+]/g, "");
-  
+
   // Check if it has at least 10 digits (minimum for most countries)
   const digitCount = cleaned.replace(/\+/g, "").length;
   return digitCount >= 10 && digitCount <= 15;
@@ -24,7 +24,7 @@ export function formatPhoneForWhatsApp(phone: string): string {
  */
 export function getWhatsAppUrl(
   phoneNumber: string,
-  message?: string
+  message?: string,
 ): string | null {
   if (!validatePhoneNumber(phoneNumber)) {
     console.error("Invalid phone number for WhatsApp:", phoneNumber);
@@ -36,4 +36,40 @@ export function getWhatsAppUrl(
   const baseUrl = `https://wa.me/${formattedPhone}`;
 
   return encodedMessage ? `${baseUrl}?text=${encodedMessage}` : baseUrl;
+}
+
+export function formatMetricValue(metric: { value: string; label: string }) {
+  const value = parseInt(metric.value);
+  const label = metric.label.toLowerCase();
+
+  switch (label) {
+    case "happy clients":
+      return value > 50 ? "50+" : metric.value;
+    case "years experience":
+      return value > 4 ? "5+" : metric.value;
+    case "custom pieces":
+      return value > 50 ? "50+" : metric.value;
+    default:
+      return metric.value;
+  }
+}
+
+export function validateImageFile(file: File): { valid: boolean; error?: string } {
+  const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+  if (!allowedTypes.includes(file.type)) {
+    return {
+      valid: false,
+      error: "Invalid file type. Only JPEG, PNG, and WebP images are allowed.",
+    };
+  }
+
+  const maxSize = 10 * 1024 * 1024;
+  if (file.size > maxSize) {
+    return {
+      valid: false,
+      error: "File size too large. Maximum size is 10MB.",
+    };
+  }
+
+  return { valid: true };
 }
